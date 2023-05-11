@@ -1,7 +1,7 @@
 from tqdm.auto import tqdm
 import wandb
 
-def train(model, loader, criterion, optimizer, config):
+def train(model, loader, criterion, optimizer, config, device = "cuda"):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more!
     wandb.watch(model, criterion, log="all", log_freq=10)
 
@@ -12,7 +12,7 @@ def train(model, loader, criterion, optimizer, config):
     for epoch in tqdm(range(config.epochs)):
         for _, (images, labels) in enumerate(loader):
 
-            loss = train_batch(images, labels, model, optimizer, criterion)
+            loss = train_batch(images, labels, model, optimizer, criterion, device)
             example_ct +=  len(images)
             batch_ct += 1
 

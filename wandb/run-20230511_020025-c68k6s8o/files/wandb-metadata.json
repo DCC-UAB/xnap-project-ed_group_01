@@ -1,0 +1,42 @@
+{
+    "os": "Windows-10-10.0.22621-SP0",
+    "python": "3.8.16",
+    "heartbeatAt": "2023-05-11T00:00:26.165031",
+    "startedAt": "2023-05-11T00:00:25.009994",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "main.py",
+    "codePath": "main.py",
+    "git": {
+        "remote": "https://github.com/DCC-UAB/xnap-project-ed_group_01.git",
+        "commit": "d40e81d0c8e475999fdf7f368e982d0a4bd1c454"
+    },
+    "email": "101579003+XavierQuerol@users.noreply.github.com",
+    "root": "C:/Users/xavid/Documents/GitHub/xnap-project-ed_group_01",
+    "host": "DESKTOP-NL6DOCJ",
+    "username": "xavid",
+    "executable": "C:\\Users\\xavid\\anaconda3\\envs\\xnap-example\\python.exe",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 1800.0,
+        "min": 0.0,
+        "max": 2301.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1800.0,
+            "min": 0.0,
+            "max": 2301.0
+        }
+    ],
+    "disk": {
+        "total": 476.19541931152344,
+        "used": 352.99322509765625
+    },
+    "memory": {
+        "total": 15.825565338134766
+    }
+}

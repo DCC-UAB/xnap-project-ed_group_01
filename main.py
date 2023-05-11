@@ -37,13 +37,13 @@ def model_pipeline(cfg:dict) -> None:
       config = wandb.config
 
       # make the model, data, and optimization problem
-      model, train_loader, test_loader, criterion, optimizer = make(config)
+      model, train_loader, test_loader, criterion, optimizer = make(config, device)
 
       # and use them to train the model
-      train(model, train_loader, criterion, optimizer, config)
+      train(model, train_loader, criterion, optimizer, config, device)
 
       # and test its final performance
-      test(model, test_loader)
+      test(model, test_loader, device)
 
     return model
 
