@@ -1,7 +1,7 @@
 from torch.utils.data import Dataset
 from torchvision.io import read_image
 
-from PHOC import phoc
+from PHOC.PHOC import phoc
 
 class dataset(Dataset):
     def __init__(self, annotations_file, img_dir, transform = None):
