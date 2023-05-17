@@ -1,4 +1,5 @@
 from phocnet_utils import *
+from punet_utils import *
 
 # Testing different function from the PHOCnet repo
 
@@ -9,9 +10,13 @@ text_list = text_lorem.split(" ")
 res = get_most_common_n_grams(text_list)
 #print(res)
 
-
 uni_grames = get_most_common_n_grams(text_list, 50, 1)
 bi_grames = get_most_common_n_grams(text_list, 50, 2)
-res_phoc = build_phoc("hola" , "abcdefghijklmnopqrstuvwxyz", [2], None, None, "-")
+print(len('abcdefghijklmnopqrstuvwxyz'))
+print(len(bi_grames))
+res_phoc = build_phoc(["hola"] , 'abcdefghijklmnopqrstuvwxyz', [1], [1,2], bi_grames)
 print(res_phoc)
 print(res_phoc.shape)
+#print(list(bi_grames.keys()))
+#res_punet = generate_label("hola")
+#print(res_punet)

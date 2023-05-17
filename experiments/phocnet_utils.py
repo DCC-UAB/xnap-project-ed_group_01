@@ -57,9 +57,13 @@ def build_phoc(words, phoc_unigrams, unigram_levels,
     if on_unknown_unigram not in ['error', 'warn']:
         raise ValueError('I don\'t know the on_unknown_unigram parameter \'%s\'' % on_unknown_unigram)
     phoc_size = len(phoc_unigrams) * np.sum(unigram_levels)
+    #print(phoc_size)
     if phoc_bigrams is not None:
         phoc_size += len(phoc_bigrams)*np.sum(bigram_levels)
+    #print(phoc_size)
     phocs = np.zeros((len(words), phoc_size))
+    #print(phocs)
+    #print(phocs.shape)
     # prepare some lambda functions
     occupancy = lambda k, n: [float(k) / n, float(k+1) / n]
     overlap = lambda a, b: [max(a[0], b[0]), min(a[1], b[1])]
@@ -67,14 +71,16 @@ def build_phoc(words, phoc_unigrams, unigram_levels,
     
     # map from character to alphabet position
     char_indices = {d: i for i, d in enumerate(phoc_unigrams)}
-    
+    #print(char_indices)
     # iterate through all the words
     for word_index, word in enumerate(words):
         if split_character is not None:
             word = word.split(split_character)       
         n = len(word) 
         for index, char in enumerate(word):
+            #print("------")
             char_occ = occupancy(index, n)
+            #print(f"Char off: {char_occ}")
             if char not in char_indices:
                 if on_unknown_unigram == 'warn':
                     logger.warn('The unigram \'%s\' is unknown, skipping this character', char)
@@ -86,15 +92,23 @@ def build_phoc(words, phoc_unigrams, unigram_levels,
             for level in unigram_levels:
                 for region in range(level):
                     region_occ = occupancy(region, level)
+                    #print(f"Region occ: {region_occ}")
+                    #print(overlap(char_occ, region_occ))
+                    #print(size(overlap(char_occ, region_occ)))
+                    #print(size(overlap(char_occ, region_occ)) / size(char_occ))
                     if size(overlap(char_occ, region_occ)) / size(char_occ) >= 0.5:
                         feat_vec_index = sum([l for l in unigram_levels if l < level]) * len(phoc_unigrams) + region * len(phoc_unigrams) + char_index
                         phocs[word_index, feat_vec_index] = 1
+                #print("LEVEL DONEEEEEE")
         # add bigrams
+        #print("------")
         if phoc_bigrams is not None:
             ngram_features = np.zeros(len(phoc_bigrams)*np.sum(bigram_levels))
             ngram_occupancy = lambda k, n: [float(k) / n, float(k+2) / n]
             for i in range(n-1):
                 ngram = word[i:i+2]
+                #print(ngram)
+                #print(phoc_bigrams.get(ngram, 0))
                 if phoc_bigrams.get(ngram, 0) == 0:
                     continue
                 occ = ngram_occupancy(i, n)
@@ -105,8 +119,9 @@ def build_phoc(words, phoc_unigrams, unigram_levels,
                         if overlap_size >= 0.5:
                             ngram_features[region * len(phoc_bigrams) + phoc_bigrams[ngram]] = 1
             phocs[word_index, -ngram_features.shape[0]:] = ngram_features        
+    #print("------")
     return phocs
-
+    
 def unigrams_from_word_list(word_list, split_character=None):
     if split_character is not None:
         unigrams = [elem for word in word_list for elem in word.get_transcription().split(split_character)]
