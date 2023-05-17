@@ -4,7 +4,7 @@ import logging
 
 def build_phoc(words, phoc_unigrams, unigram_levels,
                bigram_levels=None, phoc_bigrams=None,
-               split_character=None, on_unknown_unigram='error'):
+               split_character=None):
     '''
     Calculate Pyramidal Histogram of Characters (PHOC) descriptor (see Almazan 2014).
     Args:
@@ -20,13 +20,11 @@ def build_phoc(words, phoc_unigrams, unigram_levels,
         the PHOC for the given word
     '''
     # prepare output matrix
-    logger = logging.getLogger('PHOCGenerator')
-    if on_unknown_unigram not in ['error', 'warn']:
-        raise ValueError('I don\'t know the on_unknown_unigram parameter \'%s\'' % on_unknown_unigram)
     phoc_size = len(phoc_unigrams) * np.sum(unigram_levels)
     if phoc_bigrams is not None:
         phoc_size += len(phoc_bigrams) * np.sum(bigram_levels)
     phocs = np.zeros((len(words), phoc_size))
+
     # prepare some lambda functions
     occupancy = lambda k, n: [float(k) / n, float(k + 1) / n]
     overlap = lambda a, b: [max(a[0], b[0]), min(a[1], b[1])]
@@ -41,15 +39,9 @@ def build_phoc(words, phoc_unigrams, unigram_levels,
             word = word.split(split_character)
         n = len(word)
         for index, char in enumerate(word):
-            char_occ = occupancy(index, n)
-            if char not in char_indices:
-                if on_unknown_unigram == 'warn':
-                    logger.warn('The unigram \'%s\' is unknown, skipping this character', char)
-                    continue
-                else:
-                    logger.fatal('The unigram \'%s\' is unknown', char)
-                    raise ValueError()
+            char_occ = occupancy(index, n)        
             char_index = char_indices[char]
+
             for level in unigram_levels:
                 for region in range(level):
                     region_occ = occupancy(region, level)
@@ -58,16 +50,18 @@ def build_phoc(words, phoc_unigrams, unigram_levels,
                             phoc_unigrams) + region * len(phoc_unigrams) + char_index
                         phocs[word_index, feat_vec_index] = 1
 
-                # add bigrams
+        # add bigrams
         if phoc_bigrams is not None:
             ngram_features = np.zeros(len(phoc_bigrams) * np.sum(bigram_levels))
             ngram_occupancy = lambda k, n: [float(k) / n, float(k + 2) / n]
+
             for i in range(n - 1):
                 ngram = word[i:i + 2]
                 phoc_dict = {k: v for v, k in enumerate(phoc_bigrams)}
                 if phoc_dict.get(ngram, 666) == 666:
                     continue
                 occ = ngram_occupancy(i, n)
+
                 for level in bigram_levels:
                     for region in range(level):
                         region_occ = occupancy(region, level)
@@ -95,12 +89,10 @@ def phoc(raw_word):
 
     phoc_bigrams = []
     i = 0
-    with open('/home/amafla/Documents/PHOC/bigrams_new.txt','r') as f:
+    with open('C:/Users/xavid/Documents/GitHub/xnap-project-ed_group_01/PHOC/bigrams_new.txt','r') as f:
         for line in f:
             a = line.split()
             phoc_bigrams.append(a[0].lower())
-            #phoc_bigrams.append(list(a[0])[0])
-            #phoc_bigrams.append(list(a[0])[1])
             i = i +1
             if i >= 50:break
 
