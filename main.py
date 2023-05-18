@@ -41,7 +41,7 @@ def model_pipeline(cfg:dict) -> None:
 
         return model
 
-with open('params.yml', 'r') as file:
+with open('params2.yml', 'r') as file:
     configuration = yaml.safe_load(file)
 
 if __name__ == "__main__":
