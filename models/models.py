@@ -1,4 +1,9 @@
 import torch.nn as nn
+import torch
+import torch.nn.functional as F
+from math import ceil
+# Podriem fer directament Spatial Pyramid Pooling, o també els altres 2 tipus de pooling que proven en la PHOCnet
+from utils.spatial_pyramid_pooling import SPP 
 
 # Conventional and convolutional neural network
 
