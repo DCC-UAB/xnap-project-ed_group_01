@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset
 from torchvision.io import read_image
+import torch
 
 from PHOC.PHOC import phoc
 
@@ -22,7 +23,12 @@ class dataset(Dataset):
         target = phoc(self.paths[idx].split("_")[1])
 
         if self.transform != None:
+            img = img.to(torch.float32)
             img = self.transform(img)
+            img /= 255
+        
+        target = target.reshape([604])
+
         return img, target
     
 images_dataset = dataset("C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px/annotation_val.txt",

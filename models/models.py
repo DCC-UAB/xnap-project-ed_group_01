@@ -9,7 +9,7 @@ from utils.spatial_pyramid_pooling import SPP
 
 class PHOCNet(nn.Module):
 
-    def __init__(self, n_out, input_channels = 1, pooling_levels = 3, pool_type = 'max_pool'):
+    def __init__(self, n_out, input_channels = 3, pooling_levels = 3, pool_type = 'max_pool'):
         super(PHOCNet, self).__init__()
 
         self.conv_block1 = nn.Sequential(
@@ -49,7 +49,7 @@ class PHOCNet(nn.Module):
             nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1),
             nn.ReLU()
         )
-
+        
         self.pooling_layer_fn = SPP(levels = pooling_levels, pool_type=pool_type)
         pooling_output_size = self.pooling_layer_fn.pooling_output_size
         

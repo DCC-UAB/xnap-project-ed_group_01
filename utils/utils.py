@@ -2,7 +2,7 @@ import wandb
 import torch
 import torch.nn 
 import torchvision
-import torchvision.transforms as transforms
+from torchvision import transforms
 from models.models import *
 
 from PHOC.dataset import dataset
@@ -24,17 +24,26 @@ def make_loader(dataset, batch_size):
 
 def make(config, device="cuda"):
     # Make the data
-    train, test = get_data(config.train_annotations, config.img_dir, train=True), get_data(config.test_annotations, config.img_dir, train=False)
+    
+    transforms_train = transforms.Compose([
+        transforms.Resize((64, 64)),
+    ])
+
+    transforms_test = transforms.Compose([
+        transforms.Resize((64, 64)),
+    ])
+
+    train, test = get_data(config.train_annotations, config.img_dir, transforms_train, train=True), get_data(config.test_annotations, config.img_dir, transforms_test, train=False)
 
     train_loader = make_loader(train, batch_size=config.batch_size)
     test_loader = make_loader(test, batch_size=config.batch_size)
 
     # Make the model
-    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 1).to(device)
+    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
     model.init_weights()
 
     # Make the loss and optimizer
-    criterion = nn.BCELoss()
+    criterion = nn.BCEWithLogitsLoss(reduction = 'mean')
     optimizer = torch.optim.Adam(
         model.parameters(), lr=config.learning_rate)
     
