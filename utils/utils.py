@@ -3,7 +3,8 @@ import torch
 import torch.nn 
 import torchvision
 from torchvision import transforms
-from models.models import *
+from models.PHOCNET import *
+from models.UNET import *
 
 from PHOC.dataset import dataset
 
@@ -39,7 +40,8 @@ def make(config, device="cuda"):
     test_loader = make_loader(test, batch_size=config.batch_size)
 
     # Make the model
-    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
+    #model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
+    model = U_Net(in_channels= 3, n_out = train[0][1].shape[0]).to(device)
     model.init_weights()
 
     # Make the loss and optimizer
