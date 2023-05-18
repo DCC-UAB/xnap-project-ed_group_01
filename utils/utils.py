@@ -30,7 +30,8 @@ def make(config, device="cuda"):
     test_loader = make_loader(test, batch_size=config.batch_size)
 
     # Make the model
-    model = ConvNet(config.kernels, config.classes).to(device)
+    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 1).to(device)
+    model.init_weights()
 
     # Make the loss and optimizer
     criterion = nn.BCELoss()

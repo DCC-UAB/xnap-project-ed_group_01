@@ -1,3 +1,3 @@
-train_annotations: "C:/Users/xavid/Desktop/dataset/mjsynth/mnt/ramdisk/max/90kDICT32px/annotation_val.txt"
-test_annotations: "C:/Users/xavid/Desktop/dataset/mjsynth/mnt/ramdisk/max/90kDICT32px/annotation_val.txt"
-img_dir: "C:/Users/xavid/Desktop/dataset/mjsynth/mnt/ramdisk/max/90kDICT32px"
+train_annotations: "C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px/annotation_val.txt"
+test_annotations: "C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px/annotation_val.txt"
+img_dir: "C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px"

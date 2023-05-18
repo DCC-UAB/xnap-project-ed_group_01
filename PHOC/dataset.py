@@ -25,8 +25,8 @@ class dataset(Dataset):
             img = self.transform(img)
         return img, target
     
-images_dataset = dataset("C:/Users/xavid/Desktop/dataset/mjsynth/mnt/ramdisk/max/90kDICT32px/annotation_val.txt",
-                         "C:/Users/xavid/Desktop/dataset/mjsynth/mnt/ramdisk/max/90kDICT32px")
+images_dataset = dataset("C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px/annotation_val.txt",
+                         "C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px")
 
 #image, phoc_rep = images_dataset[0]
 #print(image.shape, phoc_rep.shape)
