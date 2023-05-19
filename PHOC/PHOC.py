@@ -78,10 +78,12 @@ def phoc(raw_word):
     :param raw_word: string of word to be converted
     :return: phoc representation as a np.array (1,604)
     '''
-
-    word =[raw_word]
-    word_lowercase = word[0].lower()
-    word = [word_lowercase]
+    if type(raw_word) == type([]):
+        word = [w.lower() for w in raw_word]
+    else:
+        word =[raw_word]
+        word_lowercase = word[0].lower()
+        word = [word_lowercase]
     phoc_unigrams = 'abcdefghijklmnopqrstuvwxyz0123456789'
     unigram_levels = [2,3,4,5]
     bigram_levels=[]
