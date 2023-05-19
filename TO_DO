@@ -1,24 +1,12 @@
-1. Search for bigrams and trigrams with most appeareance in our words
-  - The code to find it is in this link https://github.com/ssudholt/phocnet/blob/master/src/phocnet/attributes/phoc.py
-  - Use already calculated bigrams and trigrams (or use these https://github.com/AndresPMD/Pytorch-yolo-phoc/blob/master/PHOC/bigrams_new.txt) 
+1. Descomprimir fitxer a remot i executar
+2. Mirar wandb i avaluar
+3. Afegir imatges perquè entreni amb més
+4. Comparar PHOCNET amb UNET
 
-2. Create function to calculate the PHOC for any word:
-  - Old version in https://github.com/ssudholt/phocnet/blob/master/src/phocnet/attributes/phoc.py
-  - New version in https://github.com/OmarBoudraa/PUNET/blob/main/create_punet_label.py
-  - Best idea: adapt new version in order to have trigrams
+5. Segmentació a partir d'histogrames
+6. Mirar Object Detection
+7. Xavi: mirar maneres d'object detection hi ha
+8. Crear dataset (mirar dues maneres)
+9. mirar yolov8 
 
-3. Create Class Dataset
-  - Attribute with list of image paths
-  - Function get_item: 
-      - call PHOC function to create the target
-      - read image to create the input
-
-4. Create object Dataloader
-
-5. Create CNN Model 
-
-6. Create Train, Test, evaluting with BCELoss
-
-7. Create Prediction. The output is a PHOC representation. To find which is the word, use a knn to find the most similar in all the Dictionary 
-
-8. Load metrics in Weight & Bias
+Començar overleaf i posar títols i estructurar (semblant a farts del vi)
