@@ -41,7 +41,7 @@ def make(config, device="cuda"):
 
     # Make the model
     #model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
-    model = U_Net(in_channels= 3, n_out = train[0][1].shape[0]).to(device)
+    model = U_Net(in_ch= 3, out_ch = train[0][1].shape[0]).to(device)
     model.init_weights()
 
     # Make the loss and optimizer

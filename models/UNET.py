@@ -2,6 +2,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data
 import torch
+from utils.spatial_pyramid_pooling import SPP 
+
 
 class conv_block(nn.Module):
     """
@@ -42,7 +44,7 @@ class up_conv(nn.Module):
     
 class U_Net(nn.Module):
 
-    def __init__(self, in_ch=3, out_ch=1):
+    def __init__(self, in_ch, out_ch = 3, pooling_levels = 3, pool_type = 'max_pool'):
         super(U_Net, self).__init__()
 
         n1 = 64
@@ -74,18 +76,18 @@ class U_Net(nn.Module):
         #self.Conv = nn.Conv2d(filters[0], out_ch, kernel_size=1, stride=1, padding=0)
 
         self.Conv6 = nn.Sequential(
-            nn.Conv2d(in_channels=out_ch, out_channels=256, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=filters[0], out_channels=256, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, stride=1, padding=1),
             nn.ReLU()
         )
-        
-        self.pooling_layer_fn = SPP(levels = pooling_levels, pool_type=pool_type)
+
+        self.pooling_layer_fn = SPP(levels=pooling_levels, pool_type=pool_type)
         pooling_output_size = self.pooling_layer_fn.pooling_output_size
         
         self.fc1 = nn.Linear(pooling_output_size, 4096)
         self.fc2 = nn.Linear(4096, 4096)
-        self.fc3 = nn.Linear(4096, n_out)
+        self.fc3 = nn.Linear(4096, out_ch)
 
        # self.active = torch.nn.Sigmoid()
 
@@ -137,3 +139,9 @@ class U_Net(nn.Module):
         out = self.fc3(out)
 
         return out
+    
+    def init_weights(m):
+        if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
+            nn.init.kaiming_normal_(m.weight.data)
+            if m.bias is not None:
+                nn.init.constant_(m.bias.data, 0)
