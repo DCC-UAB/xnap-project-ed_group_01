@@ -48,6 +48,6 @@ for filename in os.listdir(directory):
     bounding_boxes, segmented_letters, img = segment_letters(f)
 
     #print(bounding_boxes)
-
+    
     show_bounding_boxes(bounding_boxes, img)
 

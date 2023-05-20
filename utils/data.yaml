@@ -1,0 +1,7 @@
+path: C:/Users/adars/OneDrive/Escritorio/ProjecteNN/IIIT5K/data
+train: images/train
+val: images/test
+
+# Classes
+names:
+  0: character
