@@ -1,7 +1,7 @@
 path: C:/Users/adars/OneDrive/Escritorio/ProjecteNN/IIIT5K/data
 train: images/train
-val: images/test
+val: images/train
 
 # Classes
-names:
-  0: character
+nc: 1
+names: ['character']
