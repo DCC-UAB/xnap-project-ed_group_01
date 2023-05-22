@@ -17,15 +17,13 @@ class dataset(Dataset):
         return len(self.paths)
     
     def __getitem__(self, idx):
-
-        path = self.img_dir + self.paths[idx].split(" ")[0][1:]
+        path = self.img_dir + self.paths[idx].split("\n")[0]
         img = read_image(path)
         target = phoc(self.paths[idx].split("_")[1])
-
+        img = img.to(torch.float32)
         if self.transform != None:
-            img = img.to(torch.float32)
             img = self.transform(img)
-            img /= 255
+        img /= 255
         
         target = target.reshape([604])
 

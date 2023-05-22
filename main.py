@@ -6,7 +6,6 @@ import yaml
 import numpy as np
 import torch
 import torch.nn as nn
-import torchvision
 import torchvision.transforms as transforms
 
 from train import *
@@ -34,9 +33,8 @@ def model_pipeline(cfg:dict) -> None:
         model, train_loader, test_loader, criterion, optimizer = make(config, device)
         
         # and use them to train the model
-        train(model, train_loader, criterion, optimizer, config, device)
+        train(model, train_loader, test_loader, criterion, optimizer, config, device)
         
-        # and test its final performance
         test(model, test_loader, device)
 
         return model
@@ -51,10 +49,10 @@ if __name__ == "__main__":
         train_annotations=configuration["train_annotations"],
         test_annotations=configuration["test_annotations"],
         img_dir= configuration["img_dir"],
-        epochs=5,
+        epochs=20,
         classes=10,
         kernels=[16, 32],
-        batch_size= 64,
-        learning_rate=5e-3,
+        batch_size= 32,
+        learning_rate=1e-2,
         architecture="CNN")
     model = model_pipeline(config)

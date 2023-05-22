@@ -28,11 +28,11 @@ def make(config, device="cuda"):
     # Make the data
     
     transforms_train = transforms.Compose([
-        transforms.Resize((64, 64)),
+        transforms.Resize((64, 64), antialias=True),
     ])
 
     transforms_test = transforms.Compose([
-        transforms.Resize((64, 64)),
+        transforms.Resize((64, 64), antialias=True),
     ])
 
     train, test = get_data(config.train_annotations, config.img_dir, transforms_train, train=True), get_data(config.test_annotations, config.img_dir, transforms_test, train=False)
@@ -41,12 +41,12 @@ def make(config, device="cuda"):
     test_loader = make_loader(test, batch_size=config.batch_size)
 
     # Make the model
-    #model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
-    model = U_Net(in_ch= 3, out_ch = train[0][1].shape[0]).to(device)
+    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
+    #model = U_Net(in_ch= 3, out_ch = train[0][1].shape[0]).to(device)
     model.init_weights()
 
     # Make the loss and optimizer
-    criterion = nn.BCEWithLogitsLoss(reduction = 'mean')
+    criterion = nn.BCEWithLogitsLoss(reduction = 'sum')
     optimizer = torch.optim.Adam(
         model.parameters(), lr=config.learning_rate)
     
