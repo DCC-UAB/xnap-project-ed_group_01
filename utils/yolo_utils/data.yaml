@@ -1,6 +1,6 @@
-path: C:/Users/adars/OneDrive/Escritorio/ProjecteNN/IIIT5K/data
+path: /home/alumne/data
 train: images/train
-val: images/train
+val: images/test
 
 # Classes
 nc: 1
