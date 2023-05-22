@@ -1,12 +1,10 @@
-from PIL import Image, ImageDraw, ImageFont, ImageColor
-import torch
-import torchvision.transforms as transforms
+from PIL import Image, ImageDraw, ImageFont
 import random
 import numpy as np
 import sys
 import os
 sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
-from utils.utils import convert_bbox_to_yolo
+from YOLOv8.utils.utils import convert_bbox_to_yolo
 
 
 fonts = ["ARIAL.TTF", "CALIBRI.TTF", "COMIC.TTF", "CORBEL.TTF", "SEGOEPR.TTF"]
