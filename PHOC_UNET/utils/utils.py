@@ -9,7 +9,7 @@ from .dataset import dataset
 
 def get_data(annotation_file, img_dir, transform=None, slice=1, train=True):
 
-    dataset_ = dataset(annotation_file, img_dir, transform)
+    dataset_ = dataset(annotation_file, img_dir, train, transform)
 
     return dataset_
 
@@ -34,8 +34,8 @@ def make(config, device="cuda"):
 
     train, test = get_data(config.train_annotations, config.img_dir, transforms_train, train=True), get_data(config.test_annotations, config.img_dir, transforms_test, train=False)
 
-    train_loader = make_loader(train, config.batch_size, "train")
-    test_loader = make_loader(test, config.batch_size, "test")
+    train_loader = make_loader(train, config.batch_size)
+    test_loader = make_loader(test, config.batch_size)
 
     # Make the model
     model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
