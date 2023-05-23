@@ -11,6 +11,7 @@ def train(model, train_loader, test_loader, criterion, optimizer, config, device
     example_ct = 0  # number of examples seen
     batch_ct = 0
     for epoch in tqdm(range(config.epochs)):
+        test2(model, test_loader, epoch, criterion, device)
         total_loss = 0
         for _, (images, labels) in enumerate(train_loader):
 
