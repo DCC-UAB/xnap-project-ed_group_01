@@ -1,30 +1,30 @@
 from ultralytics import YOLO
-from PIL import Image
-import matplotlib.pyplot as plt
+from PIL import Image, ImageDraw
 
 def predict_and_plot(image_path, model_path):
     # Load the model
-    #model = YOLO(model_path)
-    model = YOLO('yolov8n.yaml').load(model_path)
+    model = YOLO(model_path)
+    #model = YOLO('yolov8n.yaml').load(model_path)
     #model.conf = 0.1
     image = Image.open(image_path)
-    results = model.predict(image, imgsz=1000, augment = True, conf=0.03, iou = 0.01)
+    #results = model.predict(image, imgsz=1000, augment = True, conf=0.03, iou = 0.01)
+    results = model.predict(image)
 
     predictions = results[0].boxes.xyxy.numpy() # results[0].boxes.xyxyn.numpy()
-
-    plt.imshow(image)
-    ax = plt.gca()
+    predictions_norm = results[0].boxes.xywhn.numpy()
+    
+    draw = ImageDraw.Draw(image)
 
     for pred in predictions:
-        x, y, w, h = pred
-        rect = plt.Rectangle((x, y), w, h, fill=False, color='r')
-        ax.add_patch(rect)
+        x1, y1, x2, y2 = pred
+        draw.rectangle((x1,y1,x2,y2), None, "#f00")
 
-    plt.show()
+    image.show()
 
-    return predictions
+    return predictions_norm
 
 # Example usage
-image_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/test/test_img/1.jpg'
-model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/runs/last.pt'
-predict_and_plot(image_path, model_path)
+image_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/test/test_img/75_Leavers_43839.jpg'
+model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/checkpoints/last_train7.pt'
+bb_predictions = predict_and_plot(image_path, model_path)
+print(bb_predictions)
