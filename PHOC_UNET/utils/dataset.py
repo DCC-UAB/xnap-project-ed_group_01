@@ -17,9 +17,13 @@ class dataset(Dataset):
         return len(self.paths)
     
     def __getitem__(self, idx):
-        path = self.img_dir + self.paths[idx].split("\n")[0]
+        if "xavid" in self.img_dir:
+            path = self.img_dir + self.paths[idx].split("\n")[0].split(" ")[0][2:]
+        else:
+            path = self.img_dir + self.paths[idx].split("\n")[0]
         img = read_image(path)
-        target = phoc(self.paths[idx].split("_")[1])
+        word = self.paths[idx].split("_")[1]
+        target = phoc(word)
         img = img.to(torch.float32)
         if self.transform != None:
             img = self.transform(img)
@@ -27,4 +31,4 @@ class dataset(Dataset):
         
         target = target.reshape([604])
 
-        return img, target
+        return img, target, word
