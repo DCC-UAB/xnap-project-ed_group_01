@@ -47,7 +47,7 @@ def test2(model, test_loader, epoch, criterion, device="cuda", save:bool= True):
             total_loss += criterion(outputs, phoc_labels)
 
             if i == 0:
-                predicted_labels = predict_with_PHOC(outputs[:5].numpy())
+                predicted_labels = predict_with_PHOC(torch.sigmoid(outputs[:5]).cpu().numpy())
                 images_with_labels = draw_images(images, text_labels[:5], predicted_labels)
                 log_images(images_with_labels, epoch)
         
