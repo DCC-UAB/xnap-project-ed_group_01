@@ -39,7 +39,7 @@ def generate_images(n, label_dir, images_dir):
                 bbox[1] = max(0, bbox[1] +y)
                 bbox[3] = min(size[1], bbox[3] +y)
                 
-                draw.rectangle(bbox, None, "#f00")
+                #draw.rectangle(bbox, None, "#f00")
 
                 bbox[2] = bbox[2] - bbox[0]
                 bbox[3] = bbox[3] - bbox[1]

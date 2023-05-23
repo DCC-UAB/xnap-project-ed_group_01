@@ -5,19 +5,23 @@ from PIL import Image
 from ultralytics import YOLO
 import cv2
 
-#Model
-model = YOLO('yolov8n.pt')
+model_path = "/home/alumne/ProjecteNN/xnap-project-ed_group_01/YOLOv8/yolov8n.pt"
+img_path = "/home/alumne/data/images/test/9.jpg"
+model = YOLO(model_path)
+img = cv2.imread(img_path)
 
-# Images
-img = cv2.imread('./utils/yolo_utils/ouput.png')
-
-# Inference
-#results = model(img)
 results = model.predict(img)
-#results = model.predict("./utils/yolo_utils/6_1.png")
 result = results[0]
-#print(results)
-print(len(result.boxes))
+print(result.boxes)
+
+def predict(model_path, img_path):
+
+    model = YOLO(model_path)
+    img = cv2.imread(img_path)
+
+    results = model.predict(img)
+    result = results[0]
+    print(len(result.boxes))
 
 # Results
 #results.print()  
