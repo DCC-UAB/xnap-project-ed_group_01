@@ -21,7 +21,7 @@ def train(model, train_loader, test_loader, criterion, optimizer, config, device
 
             # Report metrics every 25th batch
             if ((batch_ct + 1) % 25) == 0:
-                train_log(loss, example_ct, epoch)
+                train_log(loss, example_ct, len(images), epoch)
 
         train_log2(total_loss, len(train_loader.dataset), epoch)
         test2(model, test_loader, epoch, criterion, device)
@@ -47,10 +47,10 @@ def train_batch(images, labels, model, optimizer, criterion, device="cuda"):
     return loss
 
 
-def train_log(loss, example_ct, epoch):
+def train_log(loss, total_example_ct, example_ct, epoch):
     # Where the magic happens
     wandb.log({"epoch": epoch, "loss": loss/example_ct}, step=example_ct)
-    print(f"Loss after {str(example_ct).zfill(5)} examples: {loss/example_ct:.3f}")
+    print(f"Loss after {str(total_example_ct).zfill(5)} examples: {loss/example_ct:.3f}")
 
 def train_log2(loss, example_ct, epoch):
     # Where the magic happens

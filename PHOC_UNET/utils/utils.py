@@ -34,8 +34,8 @@ def make(config, device="cuda"):
 
     train, test = get_data(config.train_annotations, config.img_dir, transforms_train, train=True), get_data(config.test_annotations, config.img_dir, transforms_test, train=False)
 
-    train_loader = make_loader(train, batch_size=config.batch_size)
-    test_loader = make_loader(test, batch_size=config.batch_size)
+    train_loader = make_loader(train, config.batch_size, "train")
+    test_loader = make_loader(test, config.batch_size, "test")
 
     # Make the model
     model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)

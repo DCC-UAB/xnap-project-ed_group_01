@@ -5,13 +5,16 @@ import torch
 from .build_phoc import phoc
 
 class dataset(Dataset):
-    def __init__(self, annotations_file, img_dir, transform = None):
+    def __init__(self, annotations_file, img_dir, type, transform = None):
 
         with open(annotations_file, "r") as file:
             self.paths = file.readlines()
         self.img_dir = img_dir
         self.transform = transform
-
+        if type == "train":
+            self.paths = self.paths[:4000]
+        else:
+            self.paths = self.paths[4000:5000]
     def __len__(self):
 
         return len(self.paths)
