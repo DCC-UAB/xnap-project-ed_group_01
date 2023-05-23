@@ -1,31 +1,28 @@
-import torch
-from matplotlib import pyplot as plt
-import cv2
-from PIL import Image
 from ultralytics import YOLO
-import cv2
+from PIL import Image
+import matplotlib.pyplot as plt
 
-model_path = "/home/alumne/ProjecteNN/xnap-project-ed_group_01/YOLOv8/yolov8n.pt"
-img_path = "/home/alumne/data/images/test/9.jpg"
-model = YOLO(model_path)
-img = cv2.imread(img_path)
-
-results = model.predict(img)
-result = results[0]
-print(result.boxes)
-
-def predict(model_path, img_path):
-
+def predict_and_plot(image_path, model_path):
+    # Load the model
     model = YOLO(model_path)
-    img = cv2.imread(img_path)
+    image = Image.open(image_path)
+    results = model(image)
 
-    results = model.predict(img)
-    result = results[0]
-    print(len(result.boxes))
+    predictions = results[0].boxes.xyxy.numpy() # results[0].boxes.xyxyn.numpy()
 
-# Results
-#results.print()  
-#results.show()  # or .show()
+    plt.imshow(image)
+    ax = plt.gca()
 
-#results = results.xyxy[0]  # img1 predictions (tensor)
-#boxes = results.pandas().xyxy[0]  # img1 predictions (pandas)
+    for pred in predictions:
+        x, y, w, h = pred
+        rect = plt.Rectangle((x, y), w, h, fill=False, color='r')
+        ax.add_patch(rect)
+
+    plt.show()
+
+    return predictions
+
+# Example usage
+image_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/test/test_img/4.jpg'
+model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/yolov8n.pt'
+predict_and_plot(image_path, model_path)

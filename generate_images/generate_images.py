@@ -3,7 +3,7 @@ import random
 import numpy as np
 import sys
 import os
-sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
+sys.path.insert(0, 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01')
 from YOLOv8.utils.utils import convert_bbox_to_yolo
 
 
@@ -19,7 +19,7 @@ def generate_images(n, label_dir, images_dir):
             size = (random.randint(100, 150), random.randint(40,60))
             img = Image.new(mode="RGB", size=size, color='white')
             font = fonts[random.randint(0, len(fonts)-1)]
-            font = ImageFont.truetype(f'/home/alumne/ProjecteNN/xnap-project-ed_group_01/generate_images/fonts/{font}', random.randint(15,30), encoding="unic")
+            font = ImageFont.truetype(f'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/generate_images/fonts/{font}', random.randint(15,30), encoding="unic")
 
             for j in range(random.randint(2, 6)):
                 char_index = random.randint(0, len(list_char)-1)
@@ -50,9 +50,7 @@ def generate_images(n, label_dir, images_dir):
             file.close()
             img.save(os.path.join(images_dir, f"{i}.jpg"))
 
-train_labels = '/home/alumne/data/labels/train'
-train_images = '/home/alumne/data/images/train'
-test_labels = '/home/alumne/data/labels/test'
-test_images = '/home/alumne/data/images/test'
-generate_images(40000, train_labels, train_images)
-generate_images(10000, test_labels, test_images)
+
+test_labels = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/test/test_annot'
+test_images = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/test/test_img'
+generate_images(5, test_labels, test_images)
