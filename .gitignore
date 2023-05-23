@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 mjsynth.tar.gz
 PHOC/knnpickle_file
+PHOC_UNET/params.yml
