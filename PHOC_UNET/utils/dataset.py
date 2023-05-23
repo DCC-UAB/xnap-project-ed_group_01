@@ -12,9 +12,9 @@ class dataset(Dataset):
         self.img_dir = img_dir
         self.transform = transform
         if type == "train":
-            self.paths = self.paths[:4000]
+            self.paths = self.paths[:400]
         else:
-            self.paths = self.paths[4000:5000]
+            self.paths = self.paths[400:500]
     def __len__(self):
 
         return len(self.paths)

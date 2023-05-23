@@ -28,12 +28,12 @@ def model_pipeline(cfg:dict) -> None:
         config = wandb.config
 
         # make the model, data, and optimization problem
-        model, train_loader, test_loader, criterion, optimizer = make(config, device)
+        model, train_loader, test_loader, criterion, optimizer, scheduler = make(config, device)
         
         # and use them to train the model
-        train(model, train_loader, test_loader, criterion, optimizer, config, device)
+        train(model, train_loader, test_loader, criterion, optimizer, scheduler, config, device)
         
-        test(model, test_loader, device)
+        #test(model, test_loader, device)
 
         return model
 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         train_annotations=configuration["train_annotations"],
         test_annotations=configuration["test_annotations"],
         img_dir= configuration["img_dir"],
-        epochs=20,
-        batch_size= 32,
+        epochs=100,
+        batch_size= 64,
         learning_rate=1e-2)
     model = model_pipeline(config)

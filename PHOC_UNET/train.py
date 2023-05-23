@@ -2,7 +2,7 @@ from tqdm.auto import tqdm
 import wandb
 from test import test, test2
 
-def train(model, train_loader, test_loader, criterion, optimizer, config, device = "cuda"):
+def train(model, train_loader, test_loader, criterion, optimizer, scheduler, config, device = "cuda"):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more!
     wandb.watch(model, criterion, log="all", log_freq=10)
 
@@ -20,9 +20,9 @@ def train(model, train_loader, test_loader, criterion, optimizer, config, device
             batch_ct += 1
 
             # Report metrics every 25th batch
-            if ((batch_ct + 1) % 25) == 0:
-                train_log(loss, example_ct, len(images), epoch)
-
+            #if ((batch_ct + 1) % 25) == 0:
+            train_log(loss, example_ct, len(images), epoch)
+        scheduler.step(total_loss)
         train_log2(total_loss, len(train_loader.dataset), epoch)
         test2(model, test_loader, epoch, criterion, device)
     

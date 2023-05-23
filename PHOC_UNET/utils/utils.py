@@ -3,6 +3,7 @@ import torch.nn
 from torchvision import transforms
 from models.PHOCNET import *
 from models.UNET import *
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from .dataset import dataset
 
@@ -46,5 +47,6 @@ def make(config, device="cuda"):
     criterion = nn.BCEWithLogitsLoss(reduction = 'sum')
     optimizer = torch.optim.Adam(
         model.parameters(), lr=config.learning_rate)
+    scheduler = ReduceLROnPlateau(optimizer, 'min')
     
-    return model, train_loader, test_loader, criterion, optimizer
+    return model, train_loader, test_loader, criterion, optimizer, scheduler
