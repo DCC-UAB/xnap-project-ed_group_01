@@ -1,6 +1,6 @@
 from tqdm.auto import tqdm
 import wandb
-from test import *
+from test import test, test2
 
 def train(model, train_loader, test_loader, criterion, optimizer, config, device = "cuda"):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more!
@@ -11,11 +11,10 @@ def train(model, train_loader, test_loader, criterion, optimizer, config, device
     example_ct = 0  # number of examples seen
     batch_ct = 0
     for epoch in tqdm(range(config.epochs)):
-        test2(model, test_loader, epoch, criterion, device)
         total_loss = 0
-        for _, (images, labels) in enumerate(train_loader):
+        for _, (images, phoc_labels, text_labels) in enumerate(train_loader):
 
-            loss = train_batch(images, labels, model, optimizer, criterion, device)
+            loss = train_batch(images, phoc_labels, model, optimizer, criterion, device)
             total_loss += loss
             example_ct +=  len(images)
             batch_ct += 1
