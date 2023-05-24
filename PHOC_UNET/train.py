@@ -22,8 +22,9 @@ def train(model, train_loader, test_loader, criterion, optimizer, scheduler, con
 
             # Report metrics every 25th batch
             #if ((batch_ct + 1) % 25) == 0:
-            train_log(loss, example_ct, len(images), epoch)
-        train_log2(total_loss, len(train_loader.dataset), epoch)
+            if epoch != 0:
+                train_log(loss, example_ct, len(images), epoch, total_loss, test_loss)
+        train_log2(total_loss, len(train_loader.dataset), example_ct, epoch)
         test_loss = test2(model, test_loader, epoch, criterion, device)
         scheduler.step()
         print(scheduler._last_lr)
@@ -46,15 +47,15 @@ def train_batch(images, labels, model, optimizer, criterion, device="cuda"):
     return loss
 
 
-def train_log(loss, total_example_ct, example_ct, epoch):
+def train_log(loss, total_example_ct, example_ct, epoch, train_loss, test_loss):
     # Where the magic happens
     wandb.log({"epoch": epoch, "loss": loss/example_ct}, step=total_example_ct)
     print(f"Loss after {str(total_example_ct).zfill(5)} examples: {loss/example_ct:.3f}")
 
-def train_log2(loss, example_ct, epoch):
+def train_log2(loss, example_ct_batch ,example_ct, epoch):
     # Where the magic happens
-    wandb.log({"train-loss": loss/example_ct}, step=epoch)
-    print(f"Train Loss: {loss/example_ct:.3f}")
+    wandb.log({"epoch": epoch, "train-loss": loss/example_ct_batch}, step=example_ct)
+    print(f"Train Loss: {loss/example_ct_batch:.3f}")
 
 def lr_log(lr, epoch):
     wandb.log({"learning-rate": lr}, step=epoch)

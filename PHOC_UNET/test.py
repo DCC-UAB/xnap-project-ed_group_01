@@ -2,6 +2,7 @@ import wandb
 import torch
 from torchvision import transforms as T
 from PIL import ImageDraw, ImageFont
+from torchvision import transforms
 
 from utils.predict_with_PHOC import predict_with_PHOC
 
@@ -49,9 +50,11 @@ def test2(model, test_loader, epoch, criterion, device="cuda", save:bool= True):
 
             if i == 0:
                 predicted_labels = predict_with_PHOC(outputs[:5].cpu().numpy())
-                images_with_labels = draw_images(images, text_labels[:5], predicted_labels)
+                t = transforms.Compose([transforms.Normalize(0, 1/0.1),transforms.Normalize(-0.5, 1)])
+                t_images = t(images)
+                images_with_labels = draw_images(t_images, text_labels[:5], predicted_labels)
                 log_images(images_with_labels, epoch)
-        
+
         test_log(total_loss, len(test_loader.dataset), epoch)
     return total_loss
 
