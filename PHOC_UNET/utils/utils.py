@@ -6,6 +6,7 @@ from models.UNET import *
 from models.CNN_basic import *
 from models.MLP_basic import *
 from torch.optim.lr_scheduler import StepLR, CyclicLR, CosineAnnealingLR
+from torchvision import datasets, models, transforms
 
 from .dataset import dataset
 
@@ -23,6 +24,10 @@ def make_loader(dataset, batch_size):
                                          pin_memory=True, num_workers=2)
     return loader
 
+def set_parameter_requires_grad(model, feature_extracting):
+        if feature_extracting:
+            for param in model.parameters():
+                param.requires_grad = False
 
 def make(config, device="cuda"):
     # Make the data
@@ -45,14 +50,22 @@ def make(config, device="cuda"):
     # Make the model
     #model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
     #model = U_Net(in_ch= 3, out_ch = train[0][1].shape[0]).to(device)
-    model = CNN_basic(n_out = train[0][1].shape[0]).to(device)
+    #model = CNN_basic(n_out = train[0][1].shape[0]).to(device)
     #model = MLP_basic(n_out = train[0][1].shape[0]).to(device)
-    def init_weights(m):
-        if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
-            nn.init.kaiming_normal_(m.weight)
-            if m.bias is not None:
-                nn.init.constant_(m.bias, 0)
-    model.apply(init_weights)
+    #def init_weights(m):
+    #    if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
+    #        nn.init.kaiming_normal_(m.weight)
+    #        if m.bias is not None:
+    #            nn.init.constant_(m.bias, 0)
+    #model.apply(init_weights)
+    model = models.resnet18(pretrained=True) 
+    set_parameter_requires_grad(model,True)
+    model.fc = nn.Sequential(nn.Linear(512, 512),
+                             nn.ReLU(),
+                             nn.Linear(512, 512),
+                             nn.ReLU(),
+                             nn.Linear(512, train[0][1].shape[0]),
+                             nn.Sigmoid())
 
     # Make the loss and optimizer
     criterion = nn.BCELoss(reduction = 'mean')

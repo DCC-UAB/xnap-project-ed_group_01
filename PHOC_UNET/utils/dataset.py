@@ -20,12 +20,12 @@ class dataset(Dataset):
         return len(self.paths)
     
     def __getitem__(self, idx):
-        if "xavid" in self.img_dir:
+        if "xavid" in self.img_dir or "abriil" in self.img_dir:
             path = self.img_dir + self.paths[idx].split("\n")[0].split(" ")[0][2:]
         else:
             path = self.img_dir + self.paths[idx].split("\n")[0]
-        img = read_image(path)[0,:,:]
-        img = img.reshape([1,img.shape[0],img.shape[1]])
+        img = read_image(path)#[0,:,:]
+        #img = img.reshape([1,img.shape[0],img.shape[1]])
         word = self.paths[idx].split("_")[1]
         target = phoc(word)
         img = img.to(torch.float32)
