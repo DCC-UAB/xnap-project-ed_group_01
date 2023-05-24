@@ -4,7 +4,8 @@ from torchvision import transforms
 from models.PHOCNET import *
 from models.UNET import *
 from models.CNN_basic import *
-from torch.optim.lr_scheduler import StepLR
+from models.MLP_basic import *
+from torch.optim.lr_scheduler import StepLR, CyclicLR, CosineAnnealingLR
 
 from .dataset import dataset
 
@@ -45,6 +46,7 @@ def make(config, device="cuda"):
     #model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
     #model = U_Net(in_ch= 3, out_ch = train[0][1].shape[0]).to(device)
     model = CNN_basic(n_out = train[0][1].shape[0]).to(device)
+    #model = MLP_basic(n_out = train[0][1].shape[0]).to(device)
     def init_weights(m):
         if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
             nn.init.kaiming_normal_(m.weight)
@@ -54,8 +56,8 @@ def make(config, device="cuda"):
 
     # Make the loss and optimizer
     criterion = nn.BCELoss(reduction = 'mean')
-    optimizer = torch.optim.Adam(
-        model.parameters(), lr=config.learning_rate)
-    scheduler = StepLR(optimizer, step_size=5)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
+    #scheduler = CyclicLR(optimizer, base_lr=0.001, max_lr=1, step_size_up=4)
+    scheduler = CosineAnnealingLR(optimizer, T_max=10)
     
     return model, train_loader, test_loader, criterion, optimizer, scheduler

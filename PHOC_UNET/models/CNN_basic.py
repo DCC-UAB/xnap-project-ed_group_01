@@ -55,10 +55,10 @@ class CNN_basic(nn.Module):
         out = torch.flatten(out, start_dim=1)
         out = self.fc1(out)
         out = F.relu(out)
-        out = F.dropout(out, p = 0.5, training = self.training)
+        #out = F.dropout(out, p = 0.2, training = self.training)
         out = self.fc2(out)
         out = F.relu(out)
-        out = F.dropout(out, p = 0.5, training = self.training)
+        #out = F.dropout(out, p = 0.2, training = self.training)
         out = self.fc3(out)
         out = torch.sigmoid(out)
 
