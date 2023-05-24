@@ -49,10 +49,10 @@ def train_batch(images, labels, model, optimizer, criterion, device="cuda"):
 
 def train_log(loss, total_example_ct, example_ct, epoch):
     # Where the magic happens
-    wandb.log({"epoch": epoch, "loss": loss/example_ct}, step=example_ct)
+    wandb.log({"epoch": epoch, "loss": loss/example_ct}, step=total_example_ct)
     print(f"Loss after {str(total_example_ct).zfill(5)} examples: {loss/example_ct:.3f}")
 
 def train_log2(loss, example_ct, epoch):
     # Where the magic happens
-    wandb.log({"epoch": epoch, "train loss": loss/example_ct}, step=epoch)
+    wandb.log({"epoch": epoch, "train-loss": loss/example_ct}, step=epoch)
     print(f"Train Loss: {loss/example_ct:.3f}")

@@ -55,7 +55,7 @@ def test2(model, test_loader, epoch, criterion, device="cuda", save:bool= True):
 
 def test_log(loss, example_ct, epoch):
     # Where the magic happens
-    wandb.log({"epoch": epoch, "test loss": loss/example_ct}, step=epoch)
+    wandb.log({"epoch": epoch, "test-loss": loss/example_ct}, step=epoch)
     print(f"Test Loss: {loss/example_ct:.3f}")
 
 def log_images(images, epoch):
