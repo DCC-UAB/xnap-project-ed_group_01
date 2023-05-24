@@ -52,10 +52,11 @@ def test2(model, test_loader, epoch, criterion, device="cuda", save:bool= True):
                 log_images(images_with_labels, epoch)
         
         test_log(total_loss, len(test_loader.dataset), epoch)
+    return total_loss
 
 def test_log(loss, example_ct, epoch):
     # Where the magic happens
-    wandb.log({"epoch": epoch, "test-loss": loss/example_ct}, step=epoch)
+    wandb.log({"test-loss": loss/example_ct}, step=epoch)
     print(f"Test Loss: {loss/example_ct:.3f}")
 
 def log_images(images, epoch):
@@ -73,6 +74,6 @@ def draw_one_image(image, text_label, predicted_label):
     else:
         color = "red"
     text = text_label + "\n" + predicted_label
-    font = ImageFont.truetype(f'generate_images/fonts/ARIAL.TTF', 5)
+    font = ImageFont.truetype(f'generate_images/fonts/ARIAL.TTF', 10)
     draw.text((0,0), text, font=font, fill = color)
     return image

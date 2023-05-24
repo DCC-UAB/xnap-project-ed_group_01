@@ -48,6 +48,6 @@ if __name__ == "__main__":
         test_annotations=configuration["test_annotations"],
         img_dir= configuration["img_dir"],
         epochs=100,
-        batch_size= 64,
-        learning_rate=1e-2)
+        batch_size= 8,
+        learning_rate=1e-3)
     model = model_pipeline(config)

@@ -22,12 +22,11 @@ def train(model, train_loader, test_loader, criterion, optimizer, scheduler, con
             # Report metrics every 25th batch
             #if ((batch_ct + 1) % 25) == 0:
             train_log(loss, example_ct, len(images), epoch)
-        scheduler.step(total_loss)
+        lr_log(optimizer.param_groups[0]["lr"], epoch)
+        #print(scheduler._last_lr)
         train_log2(total_loss, len(train_loader.dataset), epoch)
-        test2(model, test_loader, epoch, criterion, device)
-    
-    
-    
+        test_loss = test2(model, test_loader, epoch, criterion, device)
+        scheduler.step(test_loss)
 
 
 def train_batch(images, labels, model, optimizer, criterion, device="cuda"):
@@ -54,5 +53,8 @@ def train_log(loss, total_example_ct, example_ct, epoch):
 
 def train_log2(loss, example_ct, epoch):
     # Where the magic happens
-    wandb.log({"epoch": epoch, "train-loss": loss/example_ct}, step=epoch)
+    wandb.log({"train-loss": loss/example_ct}, step=epoch)
     print(f"Train Loss: {loss/example_ct:.3f}")
+
+def lr_log(lr, epoch):
+    wandb.log({"learning-rate": lr}, step=epoch)

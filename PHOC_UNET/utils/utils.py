@@ -44,9 +44,9 @@ def make(config, device="cuda"):
     model.init_weights()
 
     # Make the loss and optimizer
-    criterion = nn.BCEWithLogitsLoss(reduction = 'sum')
+    criterion = nn.BCEWithLogitsLoss(reduction = 'mean')
     optimizer = torch.optim.Adam(
         model.parameters(), lr=config.learning_rate)
-    scheduler = ReduceLROnPlateau(optimizer, 'min')
+    scheduler = ReduceLROnPlateau(optimizer)
     
     return model, train_loader, test_loader, criterion, optimizer, scheduler
