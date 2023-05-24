@@ -24,7 +24,8 @@ class dataset(Dataset):
             path = self.img_dir + self.paths[idx].split("\n")[0].split(" ")[0][2:]
         else:
             path = self.img_dir + self.paths[idx].split("\n")[0]
-        img = read_image(path)
+        img = read_image(path)[0,:,:]
+        img = img.reshape([1,img.shape[0],img.shape[1]])
         word = self.paths[idx].split("_")[1]
         target = phoc(word)
         img = img.to(torch.float32)

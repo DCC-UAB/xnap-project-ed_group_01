@@ -39,15 +39,16 @@ def test(model, test_loader, device="cuda", save:bool= True):
 
 def test2(model, test_loader, epoch, criterion, device="cuda", save:bool= True):
     # Run the model on some test examples
+    model.eval()
     with torch.no_grad():
         total_loss = 0
         for i, (images, phoc_labels, text_labels) in enumerate(test_loader):
             images, phoc_labels = images.to(device), phoc_labels.to(device)
             outputs = model(images)
-            total_loss += criterion(outputs, phoc_labels)
+            total_loss += criterion(outputs.float(), phoc_labels.float())
 
             if i == 0:
-                predicted_labels = predict_with_PHOC(torch.sigmoid(outputs[:5]).cpu().numpy())
+                predicted_labels = predict_with_PHOC(outputs[:5].cpu().numpy())
                 images_with_labels = draw_images(images, text_labels[:5], predicted_labels)
                 log_images(images_with_labels, epoch)
         

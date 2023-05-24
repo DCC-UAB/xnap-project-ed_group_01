@@ -3,7 +3,8 @@ import torch.nn
 from torchvision import transforms
 from models.PHOCNET import *
 from models.UNET import *
-from torch.optim.lr_scheduler import ReduceLROnPlateau
+from models.CNN_basic import *
+from torch.optim.lr_scheduler import StepLR
 
 from .dataset import dataset
 
@@ -27,10 +28,12 @@ def make(config, device="cuda"):
     
     transforms_train = transforms.Compose([
         transforms.Resize((64, 64), antialias=True),
+        transforms.Normalize(0.5, 0.1)
     ])
 
     transforms_test = transforms.Compose([
         transforms.Resize((64, 64), antialias=True),
+        transforms.Normalize(0.5, 0.1)
     ])
 
     train, test = get_data(config.train_annotations, config.img_dir, transforms_train, train=True), get_data(config.test_annotations, config.img_dir, transforms_test, train=False)
@@ -39,14 +42,20 @@ def make(config, device="cuda"):
     test_loader = make_loader(test, config.batch_size)
 
     # Make the model
-    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
+    #model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
     #model = U_Net(in_ch= 3, out_ch = train[0][1].shape[0]).to(device)
-    model.init_weights()
+    model = CNN_basic(n_out = train[0][1].shape[0]).to(device)
+    def init_weights(m):
+        if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
+            nn.init.kaiming_normal_(m.weight)
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
+    model.apply(init_weights)
 
     # Make the loss and optimizer
-    criterion = nn.BCEWithLogitsLoss(reduction = 'mean')
+    criterion = nn.BCELoss(reduction = 'mean')
     optimizer = torch.optim.Adam(
         model.parameters(), lr=config.learning_rate)
-    scheduler = ReduceLROnPlateau(optimizer)
+    scheduler = StepLR(optimizer, step_size=5)
     
     return model, train_loader, test_loader, criterion, optimizer, scheduler

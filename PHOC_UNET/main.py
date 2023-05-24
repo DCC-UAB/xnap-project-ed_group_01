@@ -11,8 +11,8 @@ from test import test
 from utils.utils import *
 from tqdm.auto import tqdm
 
-# Ensure deterministic behavior
-torch.backends.cudnn.deterministic = True
+#Ensure deterministic behavior
+torch.backends.cudnn.deterministic = False
 random.seed(hash("setting random seeds") % 2**32 - 1)
 np.random.seed(hash("improves reproducibility") % 2**32 - 1)
 torch.manual_seed(hash("by removing stochasticity") % 2**32 - 1)
@@ -48,6 +48,6 @@ if __name__ == "__main__":
         test_annotations=configuration["test_annotations"],
         img_dir= configuration["img_dir"],
         epochs=100,
-        batch_size= 8,
+        batch_size= 16,
         learning_rate=1e-3)
     model = model_pipeline(config)
