@@ -62,21 +62,24 @@ def generate_annotations(image_folder, model_path, txt_file):
             image_path = os.path.join(image_folder, image_file)
 
             image = Image.open(image_path)
+            draw = ImageDraw.Draw(image)
             results = model_yolo(image)
 
-            predictions = results[0].boxes.xyxy.numpy()
+            predictions = results[0].boxes.xyxy.cpu().data.numpy()
             sorted_indices = np.argsort(predictions[:, 0])
             sorted_predictions = predictions[sorted_indices]
 
             for idx,pred in enumerate(sorted_predictions):
                 x1, y1, x2, y2 = pred
+                draw.rectangle((x1, y1, x2, y2), None, "#f00")
+                image.show()
                 line = f"{image_file} {image_file[idx]} {x1} {y1} {x2} {y2}\n"
                 f.write(line)
 
-image_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/data/images/train'
-yolo_model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/checkpoints/last_train7.pt'
-save_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/data/labels/train_predict/predict_final.txt'
-#generate_annotations(image_path, yolo_model_path, save_path)
-img_p = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/data/images/train/59_deduces_19900.jpg'
-cnn_model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/CNN/saved_model/model.pt'
-segment_and_recognize(img_p, yolo_model_path, cnn_model_path)
+image_path = '/home/alumne/ProjecteNN/xnap-project-ed_group_01/YOLOv8/img'
+yolo_model_path = '/home/alumne/ProjecteNN/xnap-project-ed_group_01/YOLOv8/checkpoints/last_train11.pt'
+save_path = '/home/alumne/ProjecteNN/xnap-project-ed_group_01/YOLOv8/img/predict_final.txt'
+generate_annotations(image_path, yolo_model_path, save_path)
+#img_p = '/home/alumne/data/images/test/0akdxsw0.jpg'
+#cnn_model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/CNN/saved_model/model.pt'
+#segment_and_recognize(img_p, yolo_model_path, cnn_model_path)

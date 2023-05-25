@@ -4,7 +4,7 @@ import numpy as np
 import sys
 import string
 import os
-sys.path.insert(0, 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01')
+sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
 from YOLOv8.utils.utils import convert_bbox_to_yolo
 
 
@@ -31,7 +31,7 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
             while text_color == background_color:
                 background_color = random.choice(background_colors)
             
-            font = ImageFont.truetype(f'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/generate_images/fonts/{font}', random.randint(25,40), encoding="unic")
+            font = ImageFont.truetype(f'/home/alumne/ProjecteNN/xnap-project-ed_group_01/generate_images/fonts/{font}', random.randint(25,40), encoding="unic")
             _, _, w, h = font.getbbox(new_str)
             size = (w + random.randint(10, 20), h + random.randint(10,20))
             img = Image.new(mode="RGB", size=size, color= background_color)
@@ -47,7 +47,7 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
                 top = bottom - height #bbox[1]
                 left = right - width #bbox[0]
                 
-                draw.rectangle((left, top, right, bottom), None, "#f00")
+                #draw.rectangle((left, top, right, bottom), None, "#f00")
 
                 bbox_yolo = convert_bbox_to_yolo((left, top, width, height), size[0], size[1])
 
@@ -59,6 +59,10 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
             img.save(os.path.join(images_dir, f"{new_str}.jpg"))
 
 
-test_labels = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_annot'
-test_images = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_img'
-generate_images(5, test_labels, test_images)
+train_labels = "/home/alumne/data/labels/train"
+train_images = "/home/alumne/data/images/train"
+generate_images(50000, train_labels, train_images)
+
+test_labels = "/home/alumne/data/labels/test"
+test_images = "/home/alumne/data/images/test"
+generate_images(10000, test_labels, test_images)
