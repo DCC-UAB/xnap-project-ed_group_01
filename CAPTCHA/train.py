@@ -64,6 +64,7 @@ def run_training():
     targets_enc = [list(lbl_enc.transform(x)) for x in targets]
     targets_enc = [[c+1 for c in x] for x in targets_enc]
     targets_enc = np.array(targets_enc, dtype=object)
+    max_len = max(len(x) for x in targets_enc)
 
     (
         train_imgs,
@@ -79,6 +80,7 @@ def run_training():
     train_dataset = dataset.ClassificationDataset(
         image_paths=train_imgs,
         targets=train_targets,
+        max_len=max_len,
         resize=(config.IMAGE_HEIGHT, config.IMAGE_WIDTH),
     )
     train_loader = torch.utils.data.DataLoader(
@@ -90,6 +92,7 @@ def run_training():
     test_dataset = dataset.ClassificationDataset(
         image_paths=test_imgs,
         targets=test_targets,
+        max_len=max_len,
         resize=(config.IMAGE_HEIGHT, config.IMAGE_WIDTH),
     )
     test_loader = torch.utils.data.DataLoader(

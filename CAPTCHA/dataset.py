@@ -10,11 +10,13 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class ClassificationDataset:
-    def __init__(self, image_paths, targets, resize=None):
+    def __init__(self, image_paths, targets, max_len, resize=None):
         # resize = (height, width)
         self.image_paths = image_paths
         self.targets = targets
         self.resize = resize
+
+        self.max_len = max_len
 
         mean = (0.485, 0.456, 0.406)
         std = (0.229, 0.224, 0.225)
@@ -32,6 +34,8 @@ class ClassificationDataset:
     def __getitem__(self, item):
         image = Image.open(self.image_paths[item]).convert("RGB")
         targets = self.targets[item]
+        target = np.zeros(self.max_len)
+        target[:len(targets)] = targets
 
         if self.resize is not None:
             image = image.resize(
@@ -45,5 +49,5 @@ class ClassificationDataset:
 
         return {
             "images": torch.tensor(image, dtype=torch.float),
-            "targets": torch.tensor(targets, dtype=torch.long),
+            "targets": torch.tensor(target, dtype=torch.long),
         }
