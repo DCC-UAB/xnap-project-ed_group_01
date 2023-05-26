@@ -4,7 +4,6 @@ import yaml
 
 import numpy as np
 import torch
-import torchvision.transforms as transforms
 
 from train import train
 from test import test

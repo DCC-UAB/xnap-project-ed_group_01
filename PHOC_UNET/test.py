@@ -1,10 +1,7 @@
 import wandb
 import torch
-from torchvision import transforms as T
-from PIL import ImageDraw, ImageFont
-from torchvision import transforms
 
-from utils.predict_with_PHOC import predict_with_PHOC
+from utils.wandb_logs import *
 
 def test(model, test_loader, device="cuda", save:bool= True):
     # Run the model on some test examples
@@ -38,7 +35,7 @@ def test(model, test_loader, device="cuda", save:bool= True):
         wandb.save("model.onnx")
 
 
-def test2(model, test_loader, epoch, criterion, device="cuda", save:bool= True):
+def test2(model, test_loader, train_loader, epoch, criterion, device="cuda", save:bool= True):
     # Run the model on some test examples
     model.eval()
     with torch.no_grad():
@@ -47,37 +44,13 @@ def test2(model, test_loader, epoch, criterion, device="cuda", save:bool= True):
             images, phoc_labels = images.to(device), phoc_labels.to(device)
             outputs = model(images)
             total_loss += criterion(outputs.float(), phoc_labels.float())
-
             if i == 0:
-                predicted_labels = predict_with_PHOC(outputs[:5].cpu().numpy())
-                t = transforms.Compose([transforms.Normalize(0, 1/0.1),transforms.Normalize(-0.5, 1)])
-                t_images = t(images)
-                images_with_labels = draw_images(t_images, text_labels[:5], predicted_labels)
-                log_images(images_with_labels, epoch)
-
-        test_log(total_loss, len(test_loader.dataset), epoch)
-    return total_loss
-
-def test_log(loss, example_ct, epoch):
-    # Where the magic happens
-    wandb.log({"test-loss": loss/example_ct}, step=epoch)
-    print(f"Test Loss: {loss/example_ct:.3f}")
-
-def log_images(images, epoch):
-    wandb.log({f"Test epoch {epoch}": [wandb.Image(im) for im in images]})
-
-def draw_images(images, text_labels, predicted_labels):
-    transform = T.ToPILImage()
-    images = [draw_one_image(transform(im), t_lab, p_lab) for im, t_lab, p_lab in zip(images, text_labels, predicted_labels)]
-    return images
-
-def draw_one_image(image, text_label, predicted_label):
-    draw = ImageDraw.Draw(image)
-    if text_label == predicted_label:
-        color = "green"
-    else:
-        color = "red"
-    text = text_label + "\n" + predicted_label
-    font = ImageFont.truetype(f'generate_images/fonts/ARIAL.TTF', 10)
-    draw.text((0,0), text, font=font, fill = color)
-    return image
+                log_images(images, outputs[:5].cpu().numpy(), text_labels[:5], epoch, "Test")
+                
+        for i, (images, phoc_labels, text_labels) in enumerate(train_loader):
+            images, phoc_labels = images.to(device), phoc_labels.to(device)
+            outputs = model(images)
+            log_images(images, outputs[:5].cpu().numpy(), text_labels[:5], epoch, "Train")
+            break
+        
+    return total_loss/len(test_loader)
