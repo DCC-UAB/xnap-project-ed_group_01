@@ -34,9 +34,9 @@ class CaptchaModel(nn.Module):
             input_lengths = torch.full(
                 size=(bs,), fill_value=log_probs.size(0), dtype=torch.int32
             )
-            target_lengths = torch.full(
-                size=(bs,), fill_value=targets.size(1), dtype=torch.int32
-            )
+            target_lengths = torch.zeros(bs, dtype=torch.int32)
+            for i, t in enumerate(targets):
+                target_lengths[i] = (sum([1 for t2 in t if t2 == 0]))
             loss = nn.CTCLoss(blank=0)(
                 log_probs, targets, input_lengths, target_lengths
             )
