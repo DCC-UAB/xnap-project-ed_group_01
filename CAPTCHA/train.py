@@ -1,9 +1,8 @@
 import os
-import glob
 import torch
 import numpy as np
+import wandb
 
-import albumentations
 from sklearn import preprocessing
 from sklearn import model_selection
 from sklearn import metrics
@@ -109,8 +108,12 @@ def run_training():
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, factor=0.8, patience=5, verbose=True
     )
+    wandb.login()
+    wandb.init(project="catcha")
+    wandb.watch(model, log="all", log_freq=10)
+    total_example_ct = 0
     for epoch in range(config.EPOCHS):
-        train_loss = engine.train_fn(model, train_loader, optimizer)
+        train_loss = engine.train_fn(model, train_loader, optimizer, epoch)
         valid_preds, test_loss = engine.eval_fn(model, test_loader)
         valid_captcha_preds = []
         for vp in valid_preds:
@@ -123,6 +126,9 @@ def run_training():
         print(
             f"Epoch={epoch}, Train Loss={train_loss}, Test Loss={test_loss} Accuracy={accuracy}"
         )
+        total_example_ct += len(train_dataset)
+        wandb.log({"epoch": epoch, "train loss": train_loss, "test loss": test_loss}, step=total_example_ct)
+        
         scheduler.step(test_loss)
 
 
