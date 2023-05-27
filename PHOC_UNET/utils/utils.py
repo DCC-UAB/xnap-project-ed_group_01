@@ -73,7 +73,8 @@ def make(config, device="cuda"):
     optimizer = torch.optim.SGD(model.parameters(), lr=config.learning_rate, momentum=0.9)
     #scheduler = CyclicLR(optimizer, base_lr=0.001, max_lr=1, step_size_up=4)
     #scheduler = CosineAnnealingLR(optimizer, T_max=10)
-    optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)
+    scheduler = StepLR(optimizer, step_size=15, gamma=0.3)
+    #optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)
 
     scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.3, patience=5)
     
@@ -88,6 +89,5 @@ def create_weights(file_words):
     list_of_words = [l[:-1] for l in list_of_words]
     phoc_representations = phoc(list_of_words)
     suma = np.sum(phoc_representations, axis=0)
-    weights = suma/phoc_representations.shape[0]
-    final_weights = 1 / weights
-    return final_weights
+    weights = phoc_representations.shape[0]/(suma+1e-6)
+    return weights

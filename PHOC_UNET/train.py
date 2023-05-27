@@ -21,7 +21,7 @@ def train(model, train_loader, test_loader, criterion, optimizer, scheduler, con
             batch_ct += 1
 
             #Report metrics every 25th batch
-            if ((batch_ct + 1) % 25) == 0:
+            if ((batch_ct + 1) % 3) == 0:
                 train_log(loss.item(), example_ct)
         
         loss_test = test(model, test_loader, train_loader, epoch, criterion, model_phoc, device)

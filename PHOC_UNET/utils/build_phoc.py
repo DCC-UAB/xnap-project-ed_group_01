@@ -83,7 +83,7 @@ def phoc(raw_word):
         word_lowercase = word[0].lower()
         word = [word_lowercase]
     phoc_unigrams = 'abcdefghijklmnopqrstuvwxyz0123456789'
-    unigram_levels = [2]
+    unigram_levels = [1]
     bigram_levels=[]
     bigram_levels.append(2)
     
