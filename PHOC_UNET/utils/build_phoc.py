@@ -83,20 +83,20 @@ def phoc(raw_word):
         word_lowercase = word[0].lower()
         word = [word_lowercase]
     phoc_unigrams = 'abcdefghijklmnopqrstuvwxyz0123456789'
-    unigram_levels = [1]
+    unigram_levels = [2]
     bigram_levels=[]
     bigram_levels.append(2)
-
-    """phoc_bigrams = []
+    
+    phoc_bigrams = []
     i = 0
-    with open('PHOC_UNET/utils/bigrams_new.txt','r') as f:
+    """with open('PHOC_UNET/utils/bigrams_new.txt','r') as f:
         for line in f:
             a = line.split()
             phoc_bigrams.append(a[0].lower())
             i = i +1
             if i >= 50:break
 
-
+    
     qry_phocs = build_phoc(words = word, phoc_unigrams = phoc_unigrams, unigram_levels = unigram_levels,
                            bigram_levels = bigram_levels, phoc_bigrams = phoc_bigrams)"""
     qry_phocs = build_phoc(words = word, phoc_unigrams = phoc_unigrams, unigram_levels = unigram_levels)

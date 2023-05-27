@@ -50,7 +50,7 @@ def make(config, device="cuda"):
     test_loader = make_loader(test, config.batch_size)
 
     # Make the model
-    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
+    #model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 1).to(device)
     #model = U_Net(in_ch= 3, out_ch = train[0][1].shape[0]).to(device)
     #model = CNN_basic(n_out = train[0][1].shape[0]).to(device)
     #model = MLP_basic(n_out = train[0][1].shape[0]).to(device)
@@ -60,20 +60,20 @@ def make(config, device="cuda"):
     #        if m.bias is not None:
     #            nn.init.constant_(m.bias, 0)
     #model.apply(init_weights)
-    """model = models.resnet18(pretrained=True) 
+    model = models.resnet18(pretrained=True) 
     set_parameter_requires_grad(model,True)
     model.fc = nn.Sequential(nn.Linear(512, 512),
                              nn.ReLU(),
                              nn.Linear(512, 512),
                              nn.ReLU(),
-                             nn.Linear(512, train[0][1].shape[0]))"""
-
+                             nn.Linear(512, train[0][1].shape[0]))
+    model=model.to(device)
     # Make the loss and optimizer
-    criterion = nn.BCEWithLogitsLoss(reduction = 'mean', pos_weight = torch.Tensor(create_weights("Datasets/lexicon.txt")))
-    #optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
+    criterion = nn.BCEWithLogitsLoss(reduction = 'mean', pos_weight = torch.Tensor(create_weights("Datasets/lexicon.txt")).to(device))
+    optimizer = torch.optim.SGD(model.parameters(), lr=config.learning_rate, momentum=0.9)
     #scheduler = CyclicLR(optimizer, base_lr=0.001, max_lr=1, step_size_up=4)
     #scheduler = CosineAnnealingLR(optimizer, T_max=10)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)
 
     scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.3, patience=5)
     

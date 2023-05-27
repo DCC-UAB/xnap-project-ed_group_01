@@ -22,7 +22,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def model_pipeline(cfg:dict) -> None:
     # tell wandb to get started
-    with wandb.init(project="pytorch-demo", config=cfg):
+    with wandb.init(project="PHOCnet", config=cfg):
     # access all HPs through wandb.config, so logging matches execution!
         config = wandb.config
 
@@ -47,6 +47,6 @@ if __name__ == "__main__":
         test_annotations=configuration["test_annotations"],
         img_dir= configuration["img_dir"],
         epochs=50,
-        batch_size= 16,
-        learning_rate=1e-1)
+        batch_size= 64,
+        learning_rate=1e-3)
     model = model_pipeline(config)

@@ -12,9 +12,9 @@ class dataset(Dataset):
         self.img_dir = img_dir
         self.transform = transform
         if train:
-            self.paths = self.paths[-128:]
+            self.paths = self.paths[:1000]
         else:
-            self.paths = self.paths[:128]
+            self.paths = self.paths[:200]
     def __len__(self):
 
         return len(self.paths)
@@ -33,6 +33,6 @@ class dataset(Dataset):
             img = self.transform(img)
         img /= 255
         
-        target = target.reshape([36])
+        target = target.reshape(target.shape[1])
 
         return img, target, word
