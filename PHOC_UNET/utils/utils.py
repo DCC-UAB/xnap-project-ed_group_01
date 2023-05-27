@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.nn 
 from torchvision import transforms
@@ -5,9 +6,10 @@ from models.PHOCNET import *
 from models.UNET import *
 from models.CNN_basic import *
 from models.MLP_basic import *
-from torch.optim.lr_scheduler import StepLR, CyclicLR, CosineAnnealingLR
+from torch.optim.lr_scheduler import StepLR, CyclicLR, CosineAnnealingLR, ReduceLROnPlateau
 from torchvision import datasets, models, transforms
 
+from .build_phoc import phoc
 from .dataset import dataset
 
 
@@ -48,7 +50,7 @@ def make(config, device="cuda"):
     test_loader = make_loader(test, config.batch_size)
 
     # Make the model
-    #model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
+    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
     #model = U_Net(in_ch= 3, out_ch = train[0][1].shape[0]).to(device)
     #model = CNN_basic(n_out = train[0][1].shape[0]).to(device)
     #model = MLP_basic(n_out = train[0][1].shape[0]).to(device)
@@ -58,19 +60,34 @@ def make(config, device="cuda"):
     #        if m.bias is not None:
     #            nn.init.constant_(m.bias, 0)
     #model.apply(init_weights)
-    model = models.resnet18(pretrained=True) 
+    """model = models.resnet18(pretrained=True) 
     set_parameter_requires_grad(model,True)
     model.fc = nn.Sequential(nn.Linear(512, 512),
                              nn.ReLU(),
                              nn.Linear(512, 512),
                              nn.ReLU(),
-                             nn.Linear(512, train[0][1].shape[0]),
-                             nn.Sigmoid())
+                             nn.Linear(512, train[0][1].shape[0]))"""
 
     # Make the loss and optimizer
-    criterion = nn.BCELoss(reduction = 'mean')
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
+    criterion = nn.BCEWithLogitsLoss(reduction = 'mean', pos_weight = torch.Tensor(create_weights("Datasets/lexicon.txt")))
+    #optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
     #scheduler = CyclicLR(optimizer, base_lr=0.001, max_lr=1, step_size_up=4)
-    scheduler = CosineAnnealingLR(optimizer, T_max=10)
+    #scheduler = CosineAnnealingLR(optimizer, T_max=10)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.3, patience=5)
     
     return model, train_loader, test_loader, criterion, optimizer, scheduler
+
+def create_weights(file_words):
+    annotations_file = file_words
+
+    with open(annotations_file, "r") as file:
+        list_of_words = file.readlines()
+
+    list_of_words = [l[:-1] for l in list_of_words]
+    phoc_representations = phoc(list_of_words)
+    suma = np.sum(phoc_representations, axis=0)
+    weights = suma/phoc_representations.shape[0]
+    final_weights = 1 / weights
+    return final_weights

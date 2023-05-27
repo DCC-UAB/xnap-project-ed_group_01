@@ -1,7 +1,8 @@
 from tqdm.auto import tqdm
 import wandb
-from test import test, test2
+from test import test
 from utils.wandb_logs import *
+from utils.predict_with_PHOC import load_model
 
 def train(model, train_loader, test_loader, criterion, optimizer, scheduler, config, device = "cuda"):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more!
@@ -9,6 +10,7 @@ def train(model, train_loader, test_loader, criterion, optimizer, scheduler, con
     model.train()
     example_ct = 0  # number of examples seen
     batch_ct = 0
+    model_phoc = load_model()
     for epoch in tqdm(range(config.epochs)):
         train_loss = 0
         for _, (images, phoc_labels, _) in enumerate(train_loader):
@@ -18,15 +20,13 @@ def train(model, train_loader, test_loader, criterion, optimizer, scheduler, con
             example_ct +=  len(images)
             batch_ct += 1
 
-            # Report metrics every 25th batch
-            #if ((batch_ct + 1) % 25) == 0:
-
-            train_log(loss.item(), example_ct)
-        test_loss = test2(model, test_loader, train_loader, epoch, criterion, device)
+            #Report metrics every 25th batch
+            if ((batch_ct + 1) % 1) == 0:
+                train_log(loss.item(), example_ct)
         
-        train_test_log(train_loss/len(train_loader), test_loss, example_ct, epoch)
+        loss_test = test(model, test_loader, train_loader, epoch, criterion, model_phoc, device)
         
-        scheduler.step()
+        scheduler.step(loss_test)
         print(scheduler._last_lr)
 
 

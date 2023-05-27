@@ -2,18 +2,21 @@ import wandb
 from torchvision import transforms as T
 from PIL import ImageDraw, ImageFont
 from torchvision import transforms
-from utils.predict_with_PHOC import predict_with_PHOC
+
 
 def train_log(loss, total_example_ct):
     wandb.log({"loss": loss}, step=total_example_ct)
     print(f"Loss after {str(total_example_ct).zfill(5)} examples: {loss:.3f}")
 
-def train_test_log(train_loss, test_loss, example_ct, epoch):
-    wandb.log({"epoch": epoch, "train loss": train_loss, "test loss": test_loss}, step=example_ct)
-    print(f"Train Loss: {train_loss:.3f}\nTest Loss: {test_loss:.3f}")
+def train_test_log(loss_test, loss_train, accuracy_test, accuracy_train, edit_test, edit_train, epoch):
+    wandb.log({"Epoch": epoch, 
+               "Train loss": loss_train, "Test loss": loss_test,
+               "Train accuracy": accuracy_train, "Test accuracy": accuracy_test,
+               "Train edit": edit_train, "Test edit": edit_test,
+               })
+    print(f"Train Loss: {loss_train:.3f}\nTest Loss: {loss_test:.3f}")
 
-def log_images(images, outputs, text_labels, epoch, mode):
-    predicted_labels = predict_with_PHOC(outputs)
+def log_images(images, predicted_labels, text_labels, epoch, mode):
     t = transforms.Compose([transforms.Normalize(0, 1/0.1),transforms.Normalize(-0.5, 1)])
     t_images = t(images)
     images_with_labels = draw_images(t_images, text_labels, predicted_labels)

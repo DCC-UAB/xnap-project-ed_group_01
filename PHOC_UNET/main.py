@@ -48,5 +48,5 @@ if __name__ == "__main__":
         img_dir= configuration["img_dir"],
         epochs=50,
         batch_size= 16,
-        learning_rate=1e-2)
+        learning_rate=1e-1)
     model = model_pipeline(config)
