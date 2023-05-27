@@ -43,10 +43,9 @@ if __name__ == "__main__":
     wandb.login()
 
     config = dict(
-        train_annotations=configuration["train_annotations"],
-        test_annotations=configuration["test_annotations"],
-        img_dir= configuration["img_dir"],
+        train_dir=configuration["train_dir"],
+        test_dir=configuration["test_dir"],
         epochs=50,
-        batch_size= 64,
-        learning_rate=1e-1)
+        batch_size= 8,
+        learning_rate=1)
     model = model_pipeline(config)

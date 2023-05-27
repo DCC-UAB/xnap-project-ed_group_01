@@ -13,9 +13,9 @@ from .build_phoc import phoc
 from .dataset import dataset
 
 
-def get_data(annotation_file, img_dir, transform=None, slice=1, train=True):
+def get_data(img_dir, transform=None):
 
-    dataset_ = dataset(annotation_file, img_dir, train, transform)
+    dataset_ = dataset(img_dir, transform)
 
     return dataset_
 
@@ -35,41 +35,39 @@ def make(config, device="cuda"):
     # Make the data
     
     transforms_train = transforms.Compose([
-        transforms.Resize((64, 64), antialias=True),
-        transforms.Normalize(0.5, 0.1)
+        transforms.Resize((64, 64), antialias=True)
     ])
 
     transforms_test = transforms.Compose([
-        transforms.Resize((64, 64), antialias=True),
-        transforms.Normalize(0.5, 0.1)
+        transforms.Resize((64, 64), antialias=True)
     ])
 
-    train, test = get_data(config.train_annotations, config.img_dir, transforms_train, train=True), get_data(config.test_annotations, config.img_dir, transforms_test, train=False)
+    train, test = get_data(config.train_dir, transforms_train), get_data(config.test_dir, transforms_test)
 
     train_loader = make_loader(train, config.batch_size)
     test_loader = make_loader(test, config.batch_size)
 
     # Make the model
-    #model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 1).to(device)
+    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 1).to(device)
     #model = U_Net(in_ch= 3, out_ch = train[0][1].shape[0]).to(device)
     #model = CNN_basic(n_out = train[0][1].shape[0]).to(device)
     #model = MLP_basic(n_out = train[0][1].shape[0]).to(device)
-    #def init_weights(m):
-    #    if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
-    #        nn.init.kaiming_normal_(m.weight)
-    #        if m.bias is not None:
-    #            nn.init.constant_(m.bias, 0)
+    def init_weights(m):
+        if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
+            nn.init.kaiming_normal_(m.weight)
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
     #model.apply(init_weights)
-    model = models.resnet18(pretrained=True) 
+    """model = models.resnet18(pretrained=True) 
     set_parameter_requires_grad(model,True)
     model.fc = nn.Sequential(nn.Linear(512, 512),
                              nn.ReLU(),
                              nn.Linear(512, 512),
                              nn.ReLU(),
                              nn.Linear(512, train[0][1].shape[0]))
-    model=model.to(device)
+    model=model.to(device)"""
     # Make the loss and optimizer
-    criterion = nn.BCEWithLogitsLoss(reduction = 'mean', pos_weight = torch.Tensor(create_weights("Datasets/lexicon.txt")).to(device))
+    criterion = nn.BCEWithLogitsLoss(reduction = 'mean')
     optimizer = torch.optim.SGD(model.parameters(), lr=config.learning_rate, momentum=0.9)
     #scheduler = CyclicLR(optimizer, base_lr=0.001, max_lr=1, step_size_up=4)
     #scheduler = CosineAnnealingLR(optimizer, T_max=10)

@@ -62,7 +62,7 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
 
 #train_labels = "/home/alumne/data/labels/train"
 #train_images = "/home/alumne/data/images/train"
-train_labels = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_annot"
+img_dir = "C:/Users/xavid/Documents/GitHub/xnap-project-ed_group_01/Datasets/Dataset_easy/"
 train_images = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_img"
 generate_images(2, train_labels, train_images)
 
