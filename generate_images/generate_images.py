@@ -21,7 +21,7 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
         n = random.randint(3, 10)
         new_str = ''.join(random.choices(string.ascii_lowercase + string.digits, k=n))
         
-        with open(os.path.join(label_dir, f"{new_str}.txt"), 'w') as file:
+        with open(os.path.join(label_dir, f"labels_finals_test.txt"), 'a') as file:
         #with open(f"./data/labels/{i}.txt", "w") as file:
 
             font = fonts[random.randint(0, len(fonts)-1)]
@@ -47,7 +47,7 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
                 top = bottom - height #bbox[1]
                 left = right - width #bbox[0]
                 
-                draw.rectangle((left, top, right, bottom), None, "#f00")
+                #draw.rectangle((left, top, right, bottom), None, "#f00")
 
                 bbox_yolo = convert_bbox_to_yolo((left, top, width, height), size[0], size[1])
 
@@ -59,6 +59,10 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
             img.save(os.path.join(images_dir, f"{new_str}.jpg"))
 
 
-test_labels = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_annot'
-test_images = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_img'
-generate_images(5, test_labels, test_images)
+#test_labels = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/annot'
+#test_images = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/img/train'
+#generate_images(5000, test_labels, test_images)
+
+test_labels = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/annot2'
+test_images = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/img2/test'
+generate_images(100, test_labels, test_images)

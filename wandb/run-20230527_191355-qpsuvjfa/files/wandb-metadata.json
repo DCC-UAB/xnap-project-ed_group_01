@@ -1,0 +1,42 @@
+{
+    "os": "Windows-10-10.0.19045-SP0",
+    "python": "3.9.13",
+    "heartbeatAt": "2023-05-27T17:13:57.026770",
+    "startedAt": "2023-05-27T17:13:55.984691",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "c:\\Users\\adars\\github-classroom\\DCC-UAB\\xnap-project-ed_group_01\\CAPTCHA\\train.py",
+    "codePath": "CAPTCHA\\train.py",
+    "git": {
+        "remote": "https://eltonjohnfanboy:@github.com/DCC-UAB/xnap-project-ed_group_01.git",
+        "commit": "a136d19200760aaf16ce92f9a6bb5c11260bcb23"
+    },
+    "email": "103358618+eltonjohnfanboy@users.noreply.github.com",
+    "root": "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01",
+    "host": "LAPTOP-T17VIM4R",
+    "username": "adars",
+    "executable": "C:\\Users\\adars\\anaconda3\\python.exe",
+    "cpu_count": 2,
+    "cpu_count_logical": 4,
+    "cpu_freq": {
+        "current": 2600.0,
+        "min": 0.0,
+        "max": 2600.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2600.0,
+            "min": 0.0,
+            "max": 2600.0
+        }
+    ],
+    "disk": {
+        "total": 237.03155899047852,
+        "used": 218.0787353515625
+    },
+    "memory": {
+        "total": 5.9513397216796875
+    }
+}

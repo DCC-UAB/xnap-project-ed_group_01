@@ -54,7 +54,7 @@ def run_training():
         image_files = file.readlines()
     image_files = [os.path.join(config.DATA_DIR, path.split("/")[-1]) for path in image_files][:5000]
     image_files = [path.split(" ")[0] for path in image_files]
-    targets_orig = [x.split("/")[-1].split("_")[1] for x in image_files]
+    targets_orig = [x.split("\\")[-1].split(".")[0] for x in image_files]
     targets = [[c for c in x] for x in targets_orig]
     targets_flat = [c for clist in targets for c in clist]
 
