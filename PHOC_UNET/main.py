@@ -4,15 +4,14 @@ import yaml
 
 import numpy as np
 import torch
-import torchvision.transforms as transforms
 
 from train import train
 from test import test
 from utils.utils import *
 from tqdm.auto import tqdm
 
-# Ensure deterministic behavior
-torch.backends.cudnn.deterministic = True
+#Ensure deterministic behavior
+torch.backends.cudnn.deterministic = False
 random.seed(hash("setting random seeds") % 2**32 - 1)
 np.random.seed(hash("improves reproducibility") % 2**32 - 1)
 torch.manual_seed(hash("by removing stochasticity") % 2**32 - 1)
@@ -47,7 +46,7 @@ if __name__ == "__main__":
         train_annotations=configuration["train_annotations"],
         test_annotations=configuration["test_annotations"],
         img_dir= configuration["img_dir"],
-        epochs=100,
-        batch_size= 64,
+        epochs=50,
+        batch_size= 16,
         learning_rate=1e-2)
     model = model_pipeline(config)

@@ -5,26 +5,27 @@ import torch
 from .build_phoc import phoc
 
 class dataset(Dataset):
-    def __init__(self, annotations_file, img_dir, type, transform = None):
+    def __init__(self, annotations_file, img_dir, train, transform = None):
 
         with open(annotations_file, "r") as file:
             self.paths = file.readlines()
         self.img_dir = img_dir
         self.transform = transform
-        if type == "train":
-            self.paths = self.paths[:128]
+        if train:
+            self.paths = self.paths[-128:]
         else:
-            self.paths = self.paths[:64]
+            self.paths = self.paths[:128]
     def __len__(self):
 
         return len(self.paths)
     
     def __getitem__(self, idx):
-        if "xavid" in self.img_dir:
+        if "xavid" in self.img_dir or "abriil" in self.img_dir:
             path = self.img_dir + self.paths[idx].split("\n")[0].split(" ")[0][2:]
         else:
             path = self.img_dir + self.paths[idx].split("\n")[0]
-        img = read_image(path)
+        img = read_image(path)#[0,:,:]
+        #img = img.reshape([1,img.shape[0],img.shape[1]])
         word = self.paths[idx].split("_")[1]
         target = phoc(word)
         img = img.to(torch.float32)
@@ -32,6 +33,6 @@ class dataset(Dataset):
             img = self.transform(img)
         img /= 255
         
-        target = target.reshape([604])
+        target = target.reshape([36])
 
         return img, target, word
