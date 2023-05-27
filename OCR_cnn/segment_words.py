@@ -6,7 +6,7 @@ import string
 import glob
 
 
-def segment_letters(image_path, mode = "tarin", annot_file = "/home/alumne/ProjecteNN/xnap-project-ed_group_01/OCR_cnn/annotation.txt"):
+def segment_letters(image_path, mode = "train", annot_file = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/OCR_cnn/annotation_uwu.txt"):
     image = cv2.imread(image_path)
     
     if image is None:
@@ -29,9 +29,9 @@ def segment_letters(image_path, mode = "tarin", annot_file = "/home/alumne/Proje
 
     letter_bboxes.sort(key=lambda bbox: bbox[0])
 
+    annotations = []
     if mode == "train":
         letters = os.path.splitext(image_path)[0].split("_")[1]
-        annotations = []
 
         for letter,bbox in zip(letters, letter_bboxes):
             x1, y1, x2, y2 = bbox
@@ -47,11 +47,12 @@ def segment_letters(image_path, mode = "tarin", annot_file = "/home/alumne/Proje
         f.write('\n'.join(annotations))
         f.write('\n')
 
-num_files = len(glob.glob('/home/alumne/ocr_cnn_data/images/*'))
+#num_files = len(glob.glob('/home/alumne/ocr_cnn_data/images/*'))
 
-directory  = '/home/alumne/ocr_cnn_data/images'
-for i,filename in enumerate(os.listdir(directory)):
-    f = os.path.join(directory, filename)
-    segment_letters(f)
+#directory  = '/home/alumne/ocr_cnn_data/images'
+#directory = "C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px/1/2"
+#for i,filename in enumerate(os.listdir(directory)):
+#    f = os.path.join(directory, filename)
+#    segment_letters(f)
     #print(f"{i}/{num_files}")
     #print(bounding_boxes)

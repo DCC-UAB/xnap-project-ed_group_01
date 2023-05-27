@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score
 from validate import *
 import wandb
 
-wandb.init(project="OCR_CNN", group="grup1", name="OCR_CNN_1stRUN_Working2")
+wandb.init(project="OCR_CNN", group="grup1", name="OCR_CNN_test")
 
 
 num_epochs = 10
@@ -27,8 +27,8 @@ transforms = Compose([
     Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize the image
 ])
 
-image_dir  = '/home/alumne/ocr_cnn_data/images'
-annotation_file = '/home/alumne/ProjecteNN/xnap-project-ed_group_01/OCR_cnn/annotation.txt'
+image_dir  = "C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px/1/2"
+annotation_file = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/OCR_cnn/annotation.txt"
 dataset = CharacterDataset(annotation_file, image_dir, transforms)
 
 train_size = int(0.8 * len(dataset))
@@ -73,7 +73,7 @@ for epoch in range(num_epochs):
         train_labels.extend(labels.tolist())
 
         step += 1
-
+        """
         if step % log_frequency == 0:
             step_loss = loss.item() / (step*batch_size)
             step_accuracy = correct / total
@@ -92,24 +92,23 @@ for epoch in range(num_epochs):
 
             wandb.log({"Step Validation Loss": step_val_epoch_loss, "Step Validation Accuracy": step_val_accuracy,
                        "Step Validation Precision": step_val_precision, "Step Validation Recall": step_val_recall})
+        """
 
-
-    epoch_loss = loss / len(train_loader)
     epoch_accuracy = correct / total
     train_precision = precision_score(train_labels, train_predictions, average='weighted')
     train_recall = recall_score(train_labels, train_predictions, average='weighted')
 
-    print(f"Epoch {epoch+1}/{num_epochs} - Loss: {epoch_loss:.4f} - Accuracy: {epoch_accuracy:.2f}%")
+    print(f"Epoch {epoch+1}/{num_epochs} - Loss: {loss:.4f} - Accuracy: {epoch_accuracy:.2f}%")
 
     val_predictions, val_labels, val_loss =  validate_func(model, val_dataloader, device, criterion)
 
-    val_epoch_loss = val_loss / len(val_dataloader)
+    #val_epoch_loss = val_loss / len(val_dataloader)
     val_accuracy = accuracy_score(val_labels, val_predictions)
     val_precision = precision_score(val_labels, val_predictions, average='weighted')
     val_recall = recall_score(val_labels, val_predictions, average='weighted')
-    print(f"Epoch {epoch+1}/{num_epochs} - Validation Loss: {val_epoch_loss:.4f} - Accuracy: {val_accuracy:.2f}%")
+    print(f"Epoch {epoch+1}/{num_epochs} - Validation Loss: {val_loss:.4f} - Accuracy: {val_accuracy:.2f}%")
 
-    wandb.log({"Train Loss": epoch_loss, "Train Accuracy": epoch_accuracy, "Train Precision": train_precision, "Train Recall": train_recall})
+    wandb.log({"Train Loss": loss, "Train Accuracy": epoch_accuracy, "Train Precision": train_precision, "Train Recall": train_recall})
     wandb.log({"Validation Loss": val_loss,"Validation Accuracy": val_accuracy, "Validation Precision": val_precision, "Validation Recall": val_recall})
 
 torch.save(model.state_dict(), '/home/alumne/ProjecteNN/xnap-project-ed_group_01/OCR_cnn/saved_model/model.pt')
