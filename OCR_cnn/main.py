@@ -6,11 +6,17 @@ from torchvision.transforms import ToTensor
 from model import *
 from dataset import *
 from torchvision.transforms import ToTensor, Normalize, Resize, Compose
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+#import Levenshtein
+from validate import *
+import wandb
 
-num_epochs = 25
-batch_size = 16
-learning_rate = 0.001
+wandb.init(project="OCR_CNN", group="grup1", name="OCR_CNN_1stRUN_Working2")
+
+
+num_epochs = 10
+batch_size = 64
+learning_rate = 0.01
 
 # Set the device to 'cuda' if available, else use 'cpu'
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -21,8 +27,8 @@ transforms = Compose([
     Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize the image
 ])
 
-image_dir  = 'C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px/1/1'
-annotation_file = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/OCR_cnn/annotation.txt'
+image_dir  = '/home/alumne/ocr_cnn_data/images'
+annotation_file = '/home/alumne/ProjecteNN/xnap-project-ed_group_01/OCR_cnn/annotation.txt'
 dataset = CharacterDataset(annotation_file, image_dir, transforms)
 
 train_size = int(0.8 * len(dataset))
@@ -39,10 +45,14 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
 # Training i tal
+step = 0
+log_frequency = 100
 for epoch in range(num_epochs):
     loss = 0.0
     correct = 0
     total = 0
+    train_predictions = []
+    train_labels = []
     model.train()
     for images, labels in train_loader:
         images = images.to(device)
@@ -59,28 +69,47 @@ for epoch in range(num_epochs):
         _, predicted = torch.max(outputs, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
+        train_predictions.extend(predicted.tolist())
+        train_labels.extend(labels.tolist())
+
+        step += 1
+
+        if step % log_frequency == 0:
+            step_loss = loss.item() / (step*batch_size)
+            step_accuracy = correct / total
+            step_precision = precision_score(train_labels, train_predictions, average='weighted')
+            step_recall = recall_score(train_labels, train_predictions, average='weighted')
+
+            print(f"Step {step} - Step train Loss: {step_loss:.4f} - Step Accuracy: {step_accuracy:.2f}%")
+            wandb.log({"Step Train Loss": step_loss, "Step Train Accuracy": step_accuracy,
+                       "Step Train Precision": step_precision, "Step Train Recall": step_recall})
+            
+            step_val_predictions, step_val_labels, step_val_loss =  validate_func(model, val_dataloader, device, criterion)
+            step_val_epoch_loss = step_val_loss / len(val_dataloader)
+            step_val_accuracy = accuracy_score(step_val_labels, step_val_predictions)
+            step_val_precision = precision_score(step_val_labels, step_val_predictions, average='weighted')
+            step_val_recall = recall_score(step_val_labels, step_val_predictions, average='weighted')
+
+            wandb.log({"Step Validation Loss": step_val_epoch_loss, "Step Validation Accuracy": step_val_accuracy,
+                       "Step Validation Precision": step_val_precision, "Step Validation Recall": step_val_recall})
+
 
     epoch_loss = loss / len(train_loader)
-    epoch_accuracy = 100 * correct / total
+    epoch_accuracy = correct / total
+    train_precision = precision_score(train_labels, train_predictions, average='weighted')
+    train_recall = recall_score(train_labels, train_predictions, average='weighted')
+
     print(f"Epoch {epoch+1}/{num_epochs} - Loss: {epoch_loss:.4f} - Accuracy: {epoch_accuracy:.2f}%")
 
-    # Validation loop
-    model.eval()
-    val_predictions = []
-    val_labels = []
-    with torch.no_grad():
-        for images, labels in val_dataloader:
-            images = images.to(device)
-            labels = labels.to(device)
+    val_predictions, val_labels, val_loss =  validate_func(model, val_dataloader, device, criterion)
 
-            outputs = model(images)
-            _, predicted = torch.max(outputs, 1)
-
-            val_predictions.extend(predicted.tolist())
-            val_labels.extend(labels.tolist())
-
+    val_epoch_loss = val_loss / len(val_dataloader)
     val_accuracy = accuracy_score(val_labels, val_predictions)
-    print(f"Epoch [{epoch+1}/{num_epochs}], Validation Accuracy: {val_accuracy}")
+    val_precision = precision_score(val_labels, val_predictions, average='weighted')
+    val_recall = recall_score(val_labels, val_predictions, average='weighted')
+    print(f"Epoch {epoch+1}/{num_epochs} - Validation Loss: {val_epoch_loss:.4f} - Accuracy: {val_accuracy:.2f}%")
 
+    wandb.log({"Train Loss": epoch_loss, "Train Accuracy": epoch_accuracy, "Train Precision": train_precision, "Train Recall": train_recall})
+    wandb.log({"Validation Loss": val_loss,"Validation Accuracy": val_accuracy, "Validation Precision": val_precision, "Validation Recall": val_recall})
 
-torch.save(model.state_dict(), 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/CNN/saved_model/model.pt')
+torch.save(model.state_dict(), '/home/alumne/ProjecteNN/xnap-project-ed_group_01/OCR_cnn/saved_model/model.pt')
