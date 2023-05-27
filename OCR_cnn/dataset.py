@@ -21,8 +21,8 @@ class CharacterDataset(Dataset):
         image_file = annotation['image_file']
         x1, y1, x2, y2 = annotation['bbox']
 
-        image_path = os.path.join(self.image_dir, image_file)
-        image = Image.open(image_path)
+        #image_path = os.path.join(self.image_dir, image_file)
+        image = Image.open(image_file)
         character_crop = image.crop((x1, y1, x2, y2))
 
         if self.transforms != None:
@@ -48,6 +48,7 @@ class CharacterDataset(Dataset):
                 #image.crop((x1, y1, x2, y2)).show()
         return annotations
 
-#image_dir = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/data/images/train'
-#annotation_file = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/data/labels/train_predict/predict_final.txt'
+#image_dir  = 'C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px/1/1'
+#annotation_file = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/OCR_cnn/annotation.txt'
 #dataset = CharacterDataset(annotation_file, image_dir)
+#dataset[1]

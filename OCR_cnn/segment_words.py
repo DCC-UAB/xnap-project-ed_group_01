@@ -1,6 +1,9 @@
 import cv2
 import os
 import pytesseract
+from PIL import Image, ImageDraw
+import string
+
 
 def segment_letters(image_path):
     image = cv2.imread(image_path)
@@ -22,32 +25,23 @@ def segment_letters(image_path):
 
     letter_bboxes.sort(key=lambda bbox: bbox[0])
 
-    letters = []
-    for bbox in letter_bboxes:
+    letters = os.path.splitext(image_path)[0].split("_")[1]
+    annotations = []
+    string_aux = ""
+
+    for letter,bbox in zip(letters, letter_bboxes):
         x1, y1, x2, y2 = bbox
-        letter_img = gray[y1:y2, x1:x2]
-        letters.append(letter_img)
+        annotation = f"{image_path} {letter} {x1} {y1} {x2} {y2}"
+        annotations.append(annotation)
+        string_aux += letter
 
-    return letter_bboxes, letters, img_original
-
-def show_bounding_boxes(letter_bboxes, image):
-    output_image = image.copy()
-
-    for bbox in letter_bboxes:
-        x1, y1, x2, y2 = bbox
-        cv2.rectangle(output_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-    cv2.imshow('Bounding Boxes', output_image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
+    with open("C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/OCR_cnn/annotation.txt", 'a') as f:
+        f.write('\n'.join(annotations))
+        f.write('\n')
 
 directory  = 'C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px/1/1'
 for filename in os.listdir(directory):
     f = os.path.join(directory, filename)
-    bounding_boxes, segmented_letters, img = segment_letters(f)
+    segment_letters(f)
 
     #print(bounding_boxes)
-    
-    show_bounding_boxes(bounding_boxes, img)
-

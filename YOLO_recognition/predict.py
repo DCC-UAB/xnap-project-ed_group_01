@@ -24,7 +24,7 @@ def predict_and_plot(image_path, model_path):
     return predictions_norm
 
 # Example usage
-image_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_img/9i8ph2e9.jpg'
+image_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_img/am3j9kz62a.jpg'
 model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/checkpoints/last.pt'
 bb_predictions = predict_and_plot(image_path, model_path)
 print(bb_predictions)
