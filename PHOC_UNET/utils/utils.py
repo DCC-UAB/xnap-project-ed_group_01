@@ -64,7 +64,7 @@ def make(config, device="cuda"):
                              nn.ReLU(),
                              nn.Linear(512, 512),
                              nn.ReLU(),
-                             nn.Linear(512, train[0][1].shape[0]),
+                             nn.Linear(512, 604),
                              nn.Sigmoid())
 
     # Make the loss and optimizer

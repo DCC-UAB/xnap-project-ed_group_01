@@ -33,6 +33,6 @@ class dataset(Dataset):
             img = self.transform(img)
         img /= 255
         
-        target = target.reshape([36])
+        target = target.reshape([604])
 
         return img, target, word
