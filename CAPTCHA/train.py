@@ -51,8 +51,8 @@ def decode_predictions(preds, encoder):
 
 def run_training():
     with open(config.ANNOTATIONS_FILE, "r") as file:
-            image_files = file.readlines()
-    image_files = [os.path.join(config.DATA_DIR, path[2:]) for path in image_files]
+        image_files = file.readlines()
+    image_files = [os.path.join(config.DATA_DIR, path.split("/")[-1]) for path in image_files][:5000]
     image_files = [path.split(" ")[0] for path in image_files]
     targets_orig = [x.split("/")[-1].split("_")[1] for x in image_files]
     targets = [[c for c in x] for x in targets_orig]
