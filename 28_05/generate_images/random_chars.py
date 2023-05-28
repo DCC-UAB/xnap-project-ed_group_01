@@ -7,7 +7,7 @@ import os
 #sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
 sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01")
 from YOLOv8.utils.utils import convert_bbox_to_yolo
-from params import *
+from .params import *
 
 
 
@@ -33,7 +33,7 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
             while text_color == background_color:
                 background_color = random.choice(background_colors)
             
-            font = ImageFont.truetype(f'"C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/generate_images/fonts/{font}', random.randint(25,40), encoding="unic")
+            font = ImageFont.truetype(path_fonts+f'/{font}', random.randint(25,40), encoding="unic")            
             _, _, w, h = font.getbbox(new_str)
             size = (w + random.randint(10, 20), h + random.randint(10,20))
             img = Image.new(mode="RGB", size=size, color= background_color)
