@@ -6,10 +6,13 @@ from torchvision.transforms import ToTensor
 from model import *
 from dataset import *
 from torchvision.transforms import ToTensor, Normalize, Resize, Compose
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+import wandb
+
+wandb.init(project="YOLO_CNN", group="grup1", name="YOLO_CNN_test")
 
 num_epochs = 25
-batch_size = 16
+batch_size = 64
 learning_rate = 0.001
 
 # Set the device to 'cuda' if available, else use 'cpu'
@@ -43,6 +46,8 @@ for epoch in range(num_epochs):
     loss = 0.0
     correct = 0
     total = 0
+    train_predictions = []
+    train_labels = []
     model.train()
     for images, labels in train_loader:
         images = images.to(device)
@@ -59,15 +64,20 @@ for epoch in range(num_epochs):
         _, predicted = torch.max(outputs, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
+        train_predictions.extend(predicted.tolist())
+        train_labels.extend(labels.tolist())
 
-    epoch_loss = loss / len(train_loader)
+    #epoch_loss = loss / len(train_loader)
     epoch_accuracy = 100 * correct / total
-    print(f"Epoch {epoch+1}/{num_epochs} - Loss: {epoch_loss:.4f} - Accuracy: {epoch_accuracy:.2f}%")
+    train_precision = precision_score(train_labels, train_predictions, average='weighted')
+    train_recall = recall_score(train_labels, train_predictions, average='weighted')
+    print(f"Epoch {epoch+1}/{num_epochs} - Loss: {loss:.4f} - Accuracy: {epoch_accuracy:.2f}%")
 
     # Validation loop
     model.eval()
     val_predictions = []
     val_labels = []
+    val_loss = 0.0
     with torch.no_grad():
         for images, labels in val_dataloader:
             images = images.to(device)
@@ -78,9 +88,15 @@ for epoch in range(num_epochs):
 
             val_predictions.extend(predicted.tolist())
             val_labels.extend(labels.tolist())
+            val_loss += criterion(outputs, labels).item()
 
     val_accuracy = accuracy_score(val_labels, val_predictions)
+    val_precision = precision_score(val_labels, val_predictions, average='weighted')
+    val_recall = recall_score(val_labels, val_predictions, average='weighted')
     print(f"Epoch [{epoch+1}/{num_epochs}], Validation Accuracy: {val_accuracy}")
+
+    wandb.log({"Train Loss": loss, "Train Accuracy": epoch_accuracy, "Train Precision": train_precision, "Train Recall": train_recall})
+    wandb.log({"Validation Loss": val_loss,"Validation Accuracy": val_accuracy, "Validation Precision": val_precision, "Validation Recall": val_recall})
 
 
 torch.save(model.state_dict(), 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/CNN/saved_model/model.pt')

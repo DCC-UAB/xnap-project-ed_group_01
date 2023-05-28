@@ -11,7 +11,7 @@ import string
 
 # Load the trained CNN model
 model = CharacterClassifier(num_classes=62)
-model.load_state_dict(torch.load('/home/alumne/ProjecteNN/xnap-project-ed_group_01/OCR_cnn/saved_model/model.pt'))
+model.load_state_dict(torch.load('C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/OCR_cnn/saved_model/model.pt',  map_location=torch.device('cpu')))
 model.eval()
 
 # Function to recognize text in an image
@@ -19,15 +19,13 @@ def recognize_text(image):
     # Obtain bounding boxes of letters in the image
     segment_letters(image, "test")
 
-    with open('/home/alumne/ProjecteNN/xnap-project-ed_group_01/OCR_cnn/annotation.txt', 'r') as file:
+    with open('C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/OCR_cnn/annotation_uwu.txt', 'r') as file:
         lines = file.readlines()
 
     # Initialize an empty list to store recognized characters
     recognized_text = []
 
     for line in lines:
-        line = line.strip().split(' ')
-
         # Extract relevant information from the line
         image_file, x1, y1, x2, y2 = line.strip().split(' ')
         x1, y1, x2, y2 = list(map(float, [x1, y1, x2, y2]))
@@ -41,7 +39,7 @@ def recognize_text(image):
                     Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize the image
                 ])
         
-        character_crop = transforms(character_crop)
+        character_crop = transforms(character_crop).unsqueeze(0)
         index_to_char = {i:k for i,k in enumerate(string.ascii_lowercase + string.ascii_uppercase + string.digits)}
 
         # Pass the letter through the CNN model
@@ -58,7 +56,7 @@ def recognize_text(image):
 
 
 # Example usage
-image_path = 'path/to/image.jpg'
+image_path = directory = "C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/90kDICT32px/1/2/26_nudes_52518.jpg"
 
 recognized_text = recognize_text(image_path)
 print("Recognized Text:", recognized_text)

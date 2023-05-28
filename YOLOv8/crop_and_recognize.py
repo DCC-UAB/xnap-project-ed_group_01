@@ -14,6 +14,7 @@ def segment_and_recognize(image_path, yolo_model_path, cnn_model_path):
     
     model_yolo = YOLO(yolo_model_path)
     image = Image.open(image_path)
+    img_original = image.copy()
     results = model_yolo(image)
 
     predictions = results[0].boxes.xyxy.numpy()
@@ -46,7 +47,7 @@ def segment_and_recognize(image_path, yolo_model_path, cnn_model_path):
         output_string += map_dict[class_index]
 
     print(output_string)
-    image.show()
+    img_original.show()
     return output_string
 
 
@@ -79,7 +80,9 @@ def generate_annotations(image_folder, model_path, txt_file):
 image_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/img'
 yolo_model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/checkpoints/last_train11.pt'
 save_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/img/predict_final.txt'
-generate_annotations(image_path, yolo_model_path, save_path)
-#img_p = '/home/alumne/data/images/test/0akdxsw0.jpg'
-#cnn_model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/CNN/saved_model/model.pt'
-#segment_and_recognize(img_p, yolo_model_path, cnn_model_path)
+#generate_annotations(image_path, yolo_model_path, save_path)
+image_dir = 'C:/Users/adars/OneDrive/Escritorio/ProjecteNN/mnt/ramdisk/max/testing/'
+for filename in os.listdir(image_dir):
+    cnn_model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLOv8/CNN/saved_model/model.pt'
+    img_p = image_path = os.path.join(image_dir, filename)
+    segment_and_recognize(img_p, yolo_model_path, cnn_model_path)
