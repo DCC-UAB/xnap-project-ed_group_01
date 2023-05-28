@@ -73,7 +73,7 @@ for epoch in range(num_epochs):
         train_labels.extend(labels.tolist())
 
         step += 1
-
+        """
         if step % log_frequency == 0:
             step_loss = loss.item() / (step*batch_size)
             step_accuracy = correct / total
@@ -92,7 +92,7 @@ for epoch in range(num_epochs):
 
             wandb.log({"Step Validation Loss": step_val_epoch_loss, "Step Validation Accuracy": step_val_accuracy,
                        "Step Validation Precision": step_val_precision, "Step Validation Recall": step_val_recall})
-
+            """
 
     epoch_loss = loss / len(train_loader)
     epoch_accuracy = correct / total
@@ -110,6 +110,6 @@ for epoch in range(num_epochs):
     print(f"Epoch {epoch+1}/{num_epochs} - Validation Loss: {val_epoch_loss:.4f} - Accuracy: {val_accuracy:.2f}%")
 
     wandb.log({"Train Loss": epoch_loss, "Train Accuracy": epoch_accuracy, "Train Precision": train_precision, "Train Recall": train_recall})
-    wandb.log({"Validation Loss": val_loss,"Validation Accuracy": val_accuracy, "Validation Precision": val_precision, "Validation Recall": val_recall})
+    wandb.log({"Validation Loss": val_epoch_loss,"Validation Accuracy": val_accuracy, "Validation Precision": val_precision, "Validation Recall": val_recall})
 
 torch.save(model.state_dict(), '/home/alumne/ProjecteNN/xnap-project-ed_group_01/OCR_cnn/saved_model/model.pt')
