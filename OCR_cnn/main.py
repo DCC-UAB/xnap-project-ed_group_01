@@ -92,8 +92,14 @@ for epoch in range(num_epochs):
 
             wandb.log({"Step Validation Loss": step_val_epoch_loss, "Step Validation Accuracy": step_val_accuracy,
                        "Step Validation Precision": step_val_precision, "Step Validation Recall": step_val_recall})
+<<<<<<< HEAD
+            """
+
+    epoch_loss = loss / len(train_loader)
+=======
         """
 
+>>>>>>> f69c91c21582cb338c5ae7575c19a166ceed71c5
     epoch_accuracy = correct / total
     train_precision = precision_score(train_labels, train_predictions, average='weighted')
     train_recall = recall_score(train_labels, train_predictions, average='weighted')
@@ -108,7 +114,12 @@ for epoch in range(num_epochs):
     val_recall = recall_score(val_labels, val_predictions, average='weighted')
     print(f"Epoch {epoch+1}/{num_epochs} - Validation Loss: {val_loss:.4f} - Accuracy: {val_accuracy:.2f}%")
 
+<<<<<<< HEAD
+    wandb.log({"Train Loss": epoch_loss, "Train Accuracy": epoch_accuracy, "Train Precision": train_precision, "Train Recall": train_recall})
+    wandb.log({"Validation Loss": val_epoch_loss,"Validation Accuracy": val_accuracy, "Validation Precision": val_precision, "Validation Recall": val_recall})
+=======
     wandb.log({"Train Loss": loss, "Train Accuracy": epoch_accuracy, "Train Precision": train_precision, "Train Recall": train_recall})
     wandb.log({"Validation Loss": val_loss,"Validation Accuracy": val_accuracy, "Validation Precision": val_precision, "Validation Recall": val_recall})
+>>>>>>> f69c91c21582cb338c5ae7575c19a166ceed71c5
 
 torch.save(model.state_dict(), '/home/alumne/ProjecteNN/xnap-project-ed_group_01/OCR_cnn/saved_model/model.pt')
