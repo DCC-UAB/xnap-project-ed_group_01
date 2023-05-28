@@ -12,3 +12,14 @@ ocr_predictions = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group
 
 # RECOGNITION (CNN)
 saved_model_cnn = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/Recognition/saved_model"
+
+# PIPELINE (YOLO)
+yolo_image_path = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/data/images/test/"
+yolo_model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/checkpoints/last.pt'
+gt_yolo = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/data/labels/test"
+
+# PIPELINE (OCR+CNN i YOLO+CNN)
+type_model = "resnet"
+mode_cnn_entrenat = f'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/OCR_cnn/saved_model/{type_model}.pt'
+
+

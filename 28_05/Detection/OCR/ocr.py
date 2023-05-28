@@ -26,7 +26,7 @@ def convert_bbox_to_yolo(bbox, image_width, image_height):
     # Return the bounding box in YOLO format
     return yolo_center_x, yolo_center_y, yolo_width, yolo_height
 
-def segment_letters(image_path, ocr_predictions, mode = "train"):
+def segment_letters(image_path, ocr_predictions = None, train = True):
     image = cv2.imread(image_path)
     
     if image is None:
@@ -50,26 +50,22 @@ def segment_letters(image_path, ocr_predictions, mode = "train"):
     letter_bboxes.sort(key=lambda bbox: bbox[0])
     h, w, _ = image.shape
     annotations = []
-    if mode == "train":
-        letters = os.path.splitext(image_path)[0].split("_")[1]
+    for bbox in letter_bboxes:
+        x1, y1, x2, y2 = bbox
+        bbox_yolo = convert_bbox_to_yolo((x1, y1, x2-x1, y2-y1), w, h)
+        annotation = f"{bbox_yolo[0]} {bbox_yolo[1]} {bbox_yolo[2]} {bbox_yolo[3]}"
+        annotations.append(annotation)
 
-        for letter,bbox in zip(letters, letter_bboxes):
-            x1, y1, x2, y2 = bbox
-            bbox_yolo = convert_bbox_to_yolo((x1, y1, x2-x1, y2-y1), w, h)
-            annotation = f"{letter} {bbox_yolo[0]} {bbox_yolo[1]} {bbox_yolo[2]} {bbox_yolo[3]}"
-            annotations.append(annotation)
+    if train:
+        with open(os.path.join(ocr_predictions, image_path.split("\\")[1].split(".")[0]+".txt"), 'w') as f:
+            f.write('\n'.join(annotations))
+            f.write('\n')
     else:
-        for bbox in letter_bboxes:
-            x1, y1, x2, y2 = bbox
-            bbox_yolo = convert_bbox_to_yolo((x1, y1, x2-x1, y2-y1), w, h)
-            annotation = f"{bbox_yolo[0]} {bbox_yolo[1]} {bbox_yolo[2]} {bbox_yolo[3]}"
-            annotations.append(annotation)
-
-    with open(os.path.join(ocr_predictions, image_path.split("\\")[1].split(".")[0]+".txt"), 'w') as f:
-        f.write('\n'.join(annotations))
-        f.write('\n')
+        pass
+    
+    return letter_bboxes
 
 
 for i,filename in enumerate(os.listdir(test_images)):
     f = os.path.join(test_images, filename)
-    segment_letters(f, ocr_predictions, "test")
+    segment_letters(f, ocr_predictions)
