@@ -5,9 +5,10 @@ import sys
 import string
 import os
 from random_word import RandomWords
-#sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
-sys.path.insert(0, "/Users/abriil/github-classroom/DCC-UAB/xnap-project-ed_group_01")
+sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
+#sys.path.insert(0, "/Users/abriil/github-classroom/DCC-UAB/xnap-project-ed_group_01")
 from YOLOv8.utils.utils import convert_bbox_to_yolo
+sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05')
 from params import *
 
 
@@ -17,23 +18,14 @@ background_colors = [ "#F8F8F8", "#E5E5E5", "#D2D2D2", "#FFFFFF", "#F0F0F0", "#F
 
 dict_char = {k:i for i,k in enumerate(string.ascii_lowercase + string.digits)}
 
-<<<<<<< HEAD
-with open("C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/Datasets/lexicon.txt", 'r') as file:
+with open("/home/alumne/ProjecteNN/xnap-project-ed_group_01/Datasets/lexicon.txt", 'r') as file:
     words = file.readlines()
     words = [w[:-1] for w in words]
-=======
-with open('/Users/abriil/github-classroom/DCC-UAB/xnap-project-ed_group_01/Datasets/lexicon.txt', 'r') as file:
-    words = file.readlines()
-words = [w[:-1] for w in words]
->>>>>>> c19de5a0ace312d587116200a127d994729df70e
 
 def generate_images(n, label_dir, images_dir, xy = (0,0)):
     for i in range(n):
         new_str = words[random.randint(0, len(words)-1)]
-<<<<<<< HEAD
         
-=======
->>>>>>> c19de5a0ace312d587116200a127d994729df70e
         with open(os.path.join(label_dir, f"{new_str}.txt"), 'w') as file:
 
             font = fonts[random.randint(0, len(fonts)-1)]
@@ -71,9 +63,5 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
             img.save(os.path.join(images_dir, f"{new_str}.jpg"))
 
 
-<<<<<<< HEAD
-generate_images(200, train_labels, train_images)
-generate_images(50, test_labels, test_images)
-=======
-generate_images(10, train_labels, train_images)
->>>>>>> c19de5a0ace312d587116200a127d994729df70e
+#generate_images(4000, train_labels, train_images)
+#generate_images(200, test_labels, test_images)

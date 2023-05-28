@@ -4,10 +4,11 @@ import numpy as np
 import sys
 import string
 import os
-#sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
-sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01")
+sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
+#sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01")
 from YOLOv8.utils.utils import convert_bbox_to_yolo
-from .params import *
+sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05')
+from params import *
 
 
 
@@ -53,12 +54,13 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
 
                 bbox_yolo = convert_bbox_to_yolo((left, top, width, height), size[0], size[1])
 
-                #char_index = 0 #comment for multiclass
-                char_index = dict_char[char]
+                char_index = 0 #comment for multiclass
+                #char_index = dict_char[char]
                 file.write(f"{char_index} {bbox_yolo[0]} {bbox_yolo[1]} {bbox_yolo[2]} {bbox_yolo[3]}\n")
             
             file.close()
             img.save(os.path.join(images_dir, f"{new_str}.jpg"))
 
 
-generate_images(2, train_labels, train_images)
+#generate_images(50000, train_labels, train_images)
+generate_images(5000, test_labels, test_images)
