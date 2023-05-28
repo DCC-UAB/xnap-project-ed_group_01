@@ -57,7 +57,7 @@ def make(config, device="cuda"):
             nn.init.kaiming_normal_(m.weight)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
-    #model.apply(init_weights)
+    model.apply(init_weights)
     """model = models.resnet18(pretrained=True) 
     set_parameter_requires_grad(model,True)
     model.fc = nn.Sequential(nn.Linear(512, 512),

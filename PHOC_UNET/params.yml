@@ -1,3 +1,2 @@
-train_annotations: "/home/alumne/Dataset/annotations/test_annotation.txt"
-test_annotations: "/home/alumne/Dataset/annotations/test_annotation.txt"
-img_dir: "/home/alumne/Dataset/Dataset_phoc/"
+train_dir: "C:/Users/xavid/Desktop/Dataset_easy/train_easy/"
+test_dir: "C:/Users/xavid/Desktop/Dataset_easy/test_easy/"
