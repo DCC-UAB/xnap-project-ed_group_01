@@ -33,8 +33,8 @@ def build_phoc(words, phoc_unigrams, unigram_levels,
 
     # iterate through all the words
     for word_index, word in enumerate(words):
-        if '0' in word or '1' in word or '2' in word or '3' in word or '4' in word or '5' in word or '6' in word or '7' in word or '7' in word or '8' in word or '9' in word:
-            continue
+        """if '0' in word or '1' in word or '2' in word or '3' in word or '4' in word or '5' in word or '6' in word or '7' in word or '7' in word or '8' in word or '9' in word:
+            continue"""
         if split_character is not None:
             word = word.split(split_character)
         n = len(word)

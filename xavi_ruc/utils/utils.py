@@ -28,12 +28,12 @@ def make_loader(dataset, batch_size):
 def make(config, device="cuda"):
 
     transforms_train = transforms.Compose([
-        transforms.Resize((128, 128), antialias=True),
+        transforms.Resize((64, 128), antialias=True),
         transforms.Normalize(mean=[0.445313568], std=[0.26924618])
     ])
 
     transforms_test = transforms.Compose([
-        transforms.Resize((128, 128), antialias=True),
+        transforms.Resize((64, 128), antialias=True),
         transforms.Normalize(mean=[0.445313568], std=[0.26924618])
     ])
 
@@ -55,7 +55,7 @@ def make(config, device="cuda"):
     model=model.to(device)
     
     pos_weight = torch.tensor(create_weights(config.train_dir)).to(device)
-    criterion = torch.nn.BCEWithLogitsLoss(reduction = 'mean', pos_weight=pos_weight)
+    criterion = torch.nn.BCEWithLogitsLoss(reduction = 'mean', )
 
     optimizer = torch.optim.SGD(model.parameters(), lr=config.learning_rate, momentum=0.9)
     #scheduler = StepLR(optimizer, step_size=5, gamma=0.3)
@@ -76,7 +76,6 @@ def create_weights(file_words):
     phoc_representations = phoc(list_of_words)
     suma = np.sum(phoc_representations, axis=0)
     weights = phoc_representations.shape[0]/(suma+1e-6)
-    weight = weights 
     return weights
 
 def set_parameter_requires_grad(model, feature_extracting):

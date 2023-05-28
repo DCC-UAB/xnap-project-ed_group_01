@@ -42,7 +42,7 @@ def test(model, test_loader, train_loader, epoch, criterion, model_phoc, device=
                break
 
         loss_test = loss_test/len(test_loader)
-        loss_train = loss_train/5     
+        loss_train = loss_train/(i+1)    
         accuracy_test = correct_test/test_count
         accuracy_train = correct_train/train_count
         edit_test = edit_test/test_count
