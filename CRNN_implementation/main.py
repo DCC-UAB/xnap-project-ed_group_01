@@ -2,119 +2,129 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+import torch.optim.lr_scheduler as lrs
+import time
+import torch.nn.functional as F
+import string
 
-from model import *
+import pandas as pd
+
+import numpy as np
+
 from dataset import *
 
-from tqdm import tqdm
+from model import *
 
-# Set the device for training (CPU or GPU)
+
+def decode_predictions(text_batch_logits):
+
+    text_batch_tokens = F.softmax(text_batch_logits, 2).argmax(2) # [T, batch_size]
+    text_batch_tokens = text_batch_tokens.cpu().data.numpy().T # [batch_size, T]
+
+    text_batch_tokens_new = []
+    for text_tokens in text_batch_tokens:
+        text = decode_to_text(text_tokens)
+        #text = "".join(text)
+        text_batch_tokens_new.append(text)
+
+    return text_batch_tokens_new
+
+def decode_to_text(dig_lst):
+    # decoding each digit into output word
+    char_list = string.ascii_letters + string.digits
+    txt = ""
+    for index in dig_lst:
+        try:
+            txt += char_list[index]
+        except IndexError:
+            print("Invalid index:", index)
+    
+    return txt
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Set the paths to your train and validation data
-train_image_dir = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/img2/train'
-train_label_file = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/annot2/labels_finals_train.txt'
-val_image_dir = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/img2/test'
-val_label_file = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/annot2/labels_finals_test.txt'
+batch_size = 128
+learning_rate = 0.1
+num_epochs = 100
 
-# Set the input shape and number of classes
-input_shape = (32, 128)  # Assuming input images of size 32x128
-num_classes = 26  # Number of characters (excluding the blank label)
+train_dataset = Dataset("/home/alumne/ocr_cnn_data/images", train = True)
+test_dataset = Dataset("/home/alumne/ocr_cnn_data/images", train = False)
 
-# Set the hyperparameters
-batch_size = 16
-num_epochs = 10
-learning_rate = 0.001
+train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-transform = transforms.Compose([
-    transforms.Resize((32, 128)),
-    transforms.ToTensor(),
-    transforms.Normalize((0.5,), (0.5,))
-])
+def weights_init(m):
+    classname = m.__class__.__name__
+    if type(m) in [nn.Linear, nn.Conv2d, nn.Conv1d]:
+        torch.nn.init.xavier_uniform_(m.weight)
+        if m.bias is not None:
+            m.bias.data.fill_(0.01)
+    elif classname.find('BatchNorm') != -1:
+        m.weight.data.normal_(1.0, 0.02)
+        m.bias.data.fill_(0)
 
-# Create train and validation datasets
-train_dataset = TextRecognitionDataset(train_image_dir, train_label_file, transform)
-val_dataset = TextRecognitionDataset(val_image_dir, val_label_file, transform)
+char_list = string.ascii_letters+string.digits
+num_classes = len(char_list) + 1
+crnn = CRNN(num_classes)
+crnn.to(device)
+crnn.apply(weights_init)
 
-# Create train and validation data loaders
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=batch_size)
+criterion = nn.CTCLoss(blank = 0)
+optimizer = optim.Adam(crnn.parameters(), lr=learning_rate)
+scheduler = lrs.StepLR(optimizer, step_size=10, gamma=0.8)
 
-# Create an instance of the CRNN model
-model = CRNN(num_classes).to(device)
-
-# Define the loss function (CTC loss) and optimizer
-criterion = nn.CTCLoss(blank=num_classes).to(device)
-optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-
-# Training loop
+epoch_losses = []
+iteration_losses = []
 for epoch in range(num_epochs):
-    model.train()  # Set the model to training mode
-    running_loss = 0.0
+    epoch_loss_list = []
+    crnn.train()
 
-    progress_bar = tqdm(total=len(train_loader), desc=f"Epoch {epoch+1}/{num_epochs}", unit="batch")
-
-    # Iterate over the training batches
-    for images, labels in train_loader:
-        images = images.to(device)
-        labels = labels.to(device)
-
+    print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())),
+              'start epoch %d/%d:' % (epoch+1,num_epochs),'learning_rate =',scheduler.get_lr()[0])
+    
+    for images,labels,orig_labels,label_length,input_length in train_dataloader:
         optimizer.zero_grad()
+        text_batch_logits = crnn(images.to(device))
+        text_batch_logps = F.log_softmax(text_batch_logits, 2)
+        loss = criterion(text_batch_logps, labels, input_length, label_length)
+        iteration_loss = loss.item()
 
-        # Forward pass
-        outputs = model(images)
-        _, bs, _ = outputs.shape
-
-        log_probs = F.log_softmax(outputs, 2)
-        input_lengths = torch.full(
-            size=(bs,), fill_value=log_probs.size(0), dtype=torch.int32
-        )
-        target_lengths = torch.zeros(bs, dtype=torch.int32)
-        for i, t in enumerate(labels):
-            target_lengths[i] = (sum([1 for t2 in t if t2 == 0]))
-        loss = nn.CTCLoss(blank=0)(
-            log_probs, labels, input_lengths, target_lengths
-        )
+        if np.isnan(iteration_loss) or np.isinf(iteration_loss):
+            continue
         
-        # Calculate the CTC loss
-        #loss = criterion(outputs, labels, output_lengths, label_lengths)
+        iteration_losses.append(iteration_loss)
+        epoch_loss_list.append(iteration_loss)
 
-        # Backward pass and optimization
         loss.backward()
+        nn.utils.clip_grad_norm_(crnn.parameters(), 5)
         optimizer.step()
 
-        running_loss += loss.item()
-        progress_bar.update(1)
+    epoch_loss = np.mean(epoch_loss_list)
+    print("Epoch:{}    Loss:{}".format(epoch+1, epoch_loss))
+    epoch_losses.append(epoch_loss)
 
-    # Compute average training loss
-    train_loss = running_loss / len(train_loader)
-
-    # Evaluate on the validation set
-    model.eval()  # Set the model to evaluation mode
-    val_predictions = []
-
+    crnn.eval()
     with torch.no_grad():
-        for images, labels in val_loader:
-            images = images.to(device)
+        val_loss = []
+        for images,labels,orig_labels,label_length,input_length in test_dataloader:
+            text_batch_logits_val = crnn(images.to(device))
+            text_batch_logps_val = F.log_softmax(text_batch_logits_val, 2)
+            loss_val = criterion(text_batch_logps_val, labels, input_length, label_length)
+            val_loss.append(loss_val.item())
+        val_epoch_loss = np.mean(val_loss)
+        print("Epoch:{}    Val Loss:{}".format(epoch+1, val_epoch_loss))
 
-            # Forward pass
-            outputs = model(images)
+    scheduler.step()
 
-            # Convert the output logits to predicted labels
-            _, predicted = torch.max(outputs, dim=2)
-            predicted = predicted.cpu().numpy()
+crnn.eval()
+with torch.no_grad():
+    results_test = pd.DataFrame(columns=['actual', 'prediction'])
+    for images,labels,orig_labels,label_length,input_length in test_dataloader:
+        text_batch_logits = crnn(images.to(device))
+        text_batch_pred = decode_predictions(text_batch_logits)
+        df = pd.DataFrame(columns=['actual', 'prediction'])
+        df['actual'] = orig_labels
+        df['prediction'] = text_batch_pred
+        results_test = pd.concat([results_test, df])
 
-            for prediction in predicted:
-                text = ""
-                for char in prediction:
-                    if char != num_classes:  # Exclude the blank label
-                        text += chr(char + ord('a'))  # Convert label to character
-                val_predictions.append(text)
-
-    # Print validation predictions
-    print("Epoch:", epoch + 1)
-    print("Validation Predictions:", val_predictions)
-
-    # Print average training loss
-    print("Train Loss:", train_loss)
-    progress_bar.close()
+df.to_csv("/home/alumne/ProjecteNN/xnap-project-ed_group_01/CRNN_implementation/results.csv", index=False)

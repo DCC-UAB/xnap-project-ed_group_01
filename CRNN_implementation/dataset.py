@@ -1,65 +1,91 @@
-import os
+import albumentations
 import torch
-from torch.utils.data import Dataset
-from torchvision import transforms
+import os
+import numpy as np
+
 from PIL import Image
+from PIL import ImageFile
+import cv2
+from torchvision import transforms
+from torch.utils.data import Dataset, DataLoader
+import string
+from sklearn.model_selection import train_test_split
 
-class TextRecognitionDataset(Dataset):
-    def __init__(self, image_dir, label_file, transform=None):
-        self.image_dir = image_dir
-        self.label_file = label_file
-        self.transform = transform
-        self.image_paths, self.labels = self._load_labels()
+class Dataset(Dataset):
 
-    def _load_labels(self):
-        image_paths = []
-        labels = []
+    def __init__(self, img_dir, train = True, resize = (32,128)):
+        path_list_orig = os.listdir(img_dir)
+        train_files, test_files = train_test_split(path_list_orig, test_size=0.1, random_state=42)
+        path_list = train_files if train else test_files
+        abspath = os.path.abspath(img_dir)
+        self.resize = resize
+        self.max_label_len = 0
 
-        with open(self.label_file, 'r') as file:
-            lines = file.readlines()
-            for line in lines:
-                image_file = line.strip()
-                image_path = os.path.join(self.image_dir, image_file)
-                image_paths.append(image_path)
-                labels.append(image_file.split('.')[0])  # Remove the file extension
+        self.img = []
+        self.orig_txt = []
+        self.label_length = []
+        self.input_length = []
+        self.txt_notpadded = []
 
-        return image_paths, labels
+        for path in path_list:
+            
+            img = cv2.cvtColor(cv2.imread(os.path.join(abspath, path)), cv2.COLOR_BGR2GRAY) 
+
+            img = cv2.resize(img, (32, 128))
+            img = np.expand_dims(img , axis = 2)
+            img = np.transpose(img,(2, 1, 0))
+            img = img/255.
+
+            label = os.path.basename(os.path.join(abspath, path)).split('.')[0].lower().strip().split("_")[1]
+            self.img.append(img)
+            self.orig_txt.append(label)
+            self.input_length.append(31)
+            self.label_length.append(len(label))
+            self.txt_notpadded.append(self.encode_to_labels(label))
+
+            if len(label) > self.max_label_len:
+                self.max_label_len = len(label)
+        self.txt = self.pad_sequences(self.txt_notpadded, self.max_label_len, len(string.ascii_letters+string.digits))
+        # AMB VARIABLE LENGTH CAL FER PADDING THE SELF.TXT!!!!!!!!        
+
+    def pad_sequences(self, sequences, maxlen, padding_value):
+        padded_sequences = []
+        for sequence in sequences:
+            if len(sequence) >= maxlen:
+                padded_sequence = sequence[:maxlen]
+            else:
+                padded_sequence = sequence + [padding_value] * (maxlen - len(sequence))
+            padded_sequences.append(padded_sequence)
+        return padded_sequences
+ 
+    def encode_to_labels(self, txt):
+        # encoding each output word into digits
+        char_list = string.ascii_letters+string.digits
+        dig_lst = []
+        for index, char in enumerate(txt):
+            try:
+                dig_lst.append(char_list.index(char))
+            except:
+                print(char)
+        
+        return dig_lst
 
     def __len__(self):
-        return len(self.image_paths)
+        return len(self.img)
+    
+    
+    def __getitem__(self, idx):
+        img_vector = torch.tensor(self.img[idx], dtype = torch.float32)
+        orig_txt = self.orig_txt[idx]
+        label_length_vect = torch.tensor(self.label_length[idx], dtype = torch.int32)
+        input_length_vector = torch.tensor(self.input_length[idx], dtype = torch.int32)
+        txt = torch.tensor(self.txt[idx], dtype = torch.long)
 
-    def _encode_label(self, label):
-        encoded_label = [ord(c) - ord('a') + 1 for c in label]  # Encode each character as a number (a=1, b=2, ...)
+        return img_vector, txt, orig_txt, label_length_vect, input_length_vector
 
-        # Apply padding if the label is shorter than the maximum length
-        max_label_length = max(len(encoded) for encoded in self.labels)
-        encoded_label += [0] * (max_label_length - len(encoded_label))
-
-        encoded_label = torch.tensor(encoded_label, dtype=torch.long)
-        return encoded_label
-
-    def __getitem__(self, index):
-        image_path = self.image_paths[index]
-        label = self.labels[index]
-
-        image = Image.open(image_path).convert('L')  # Convert to grayscale
-
-        if self.transform is not None:
-            image = self.transform(image)
-
-        label_tensor = self._encode_label(label)
-        return image, label_tensor
-
-# Set the path to the directory containing the images
-image_dir = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/img'
-
-# Set the path to the text file containing the labels
-label_file = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/labels.txt'
-
-# Define the transformations to apply to the images
-
-
-# Create an instance of the TextRecognitionDataset
-#dataset = TextRecognitionDataset(image_dir, label_file, transform)
-#aux = dataset[0]
+#aux = Dataset("C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/img2/test")
+#aux[0]
+#train_loader = DataLoader(
+#    aux, batch_size=16, shuffle=True
+#)
 #print("a")
