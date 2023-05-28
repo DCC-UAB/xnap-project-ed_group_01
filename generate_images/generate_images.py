@@ -18,7 +18,7 @@ dict_char = {k:i for i,k in enumerate(string.ascii_lowercase + string.digits)}
 
 def generate_images(n, label_dir, images_dir, xy = (0,0)):
     for i in range(n):
-        n = random.randint(3, 10)
+        n = 9
         new_str = ''.join(random.choices(string.ascii_lowercase + string.digits, k=n))
         
         with open(os.path.join(label_dir, f"labels_finals_test.txt"), 'a') as file:
@@ -37,7 +37,7 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
             img = Image.new(mode="RGB", size=size, color= background_color)
 
             draw = ImageDraw.Draw(img)
-            draw.text(xy, new_str, font = font, fill = text_color)
+            draw.text(xy, new_str, font = font, fill = "black")
             for i, char in enumerate(new_str):
                 _, _, right, _ = font.getbbox(new_str[:i+1])
                 _, _, _, bottom = font.getbbox(char)
@@ -53,8 +53,9 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
 
                 char_index = 0 #comment for multiclass
                 #char_index = dict_char[char]
-                file.write(f"{char_index} {bbox_yolo[0]} {bbox_yolo[1]} {bbox_yolo[2]} {bbox_yolo[3]}\n")
+                #file.write(f"{char_index} {bbox_yolo[0]} {bbox_yolo[1]} {bbox_yolo[2]} {bbox_yolo[3]}\n")
             
+            file.write(f"{new_str}.jpg\n")
             file.close()
             img.save(os.path.join(images_dir, f"{new_str}.jpg"))
 
@@ -64,5 +65,5 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
 #generate_images(5000, test_labels, test_images)
 
 test_labels = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/annot2'
-test_images = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/img2/test'
-generate_images(100, test_labels, test_images)
+test_images = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/CRNN_implementation/dataset/img2/train'
+generate_images(500, test_labels, test_images)
