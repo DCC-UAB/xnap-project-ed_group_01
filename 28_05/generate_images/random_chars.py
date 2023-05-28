@@ -4,7 +4,6 @@ import numpy as np
 import sys
 import string
 import os
-from random_word import RandomWords
 #sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
 sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01")
 from YOLOv8.utils.utils import convert_bbox_to_yolo
@@ -12,7 +11,7 @@ from params import *
 
 
 
-fonts = os.listdir(path_fonts)
+fonts = ["ARIAL.TTF", "CALIBRI.TTF", "COMIC.TTF", "CORBEL.TTF", "SEGOEPR.TTF", "BERNHC.TTF", "COLONNA.TTF", "FRSCRIPT.TTF", "HARLOWSI.TTF", "INKFREE.TTF", "ITCBLKAD.TTF", "JOKERMAN.TTF", "MTCORSVA.TTF", "VINERITC.TTF"]
 text_colors = ["#000000", "#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF"]
 background_colors = [ "#F8F8F8", "#E5E5E5", "#D2D2D2", "#FFFFFF", "#F0F0F0", "#FAFAFA", "#EFEFEF", "#F5F5F5"]
 
@@ -20,11 +19,12 @@ dict_char = {k:i for i,k in enumerate(string.ascii_lowercase + string.digits)}
 
 
 def generate_images(n, label_dir, images_dir, xy = (0,0)):
-    r = RandomWords()
     for i in range(n):
-        new_str = r.get_random_word()
+        n = random.randint(3, 10)
+        new_str = ''.join(random.choices(string.ascii_lowercase + string.digits, k=n))
         
         with open(os.path.join(label_dir, f"{new_str}.txt"), 'w') as file:
+        #with open(f"./data/labels/{i}.txt", "w") as file:
 
             font = fonts[random.randint(0, len(fonts)-1)]
             
@@ -33,7 +33,7 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
             while text_color == background_color:
                 background_color = random.choice(background_colors)
             
-            font = ImageFont.truetype(path_fonts+f'/{font}', random.randint(25,40), encoding="unic")
+            font = ImageFont.truetype(f'"C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/generate_images/fonts/{font}', random.randint(25,40), encoding="unic")
             _, _, w, h = font.getbbox(new_str)
             size = (w + random.randint(10, 20), h + random.randint(10,20))
             img = Image.new(mode="RGB", size=size, color= background_color)
