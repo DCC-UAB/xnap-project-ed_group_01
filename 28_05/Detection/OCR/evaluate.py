@@ -1,28 +1,8 @@
 import sys
-sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05")
+sys.path.insert(0, "/Users/xavid/Documents/GitHub/xnap-project-ed_group_01/28_05")
 from params import *
 from PIL import Image, ImageDraw
-
-image = Image.open("C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/data/images/test/weekending.jpg")
-
-def read_txt_file(file_path):
-    result = []
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        for line in lines:
-            numbers = [float(num) for num in line.strip().split()]
-            result.append(numbers)
-    return result
-
-# Aquí només ho estem fent per una imatge, la idea seria tenir-hi el directori amb predictions i labels correctes
-# i que iteri per tots els elmeents dels directoris de 1 en 1 i calculi metriquis i dongui una preciosn, recall general per TOT
-file_path_prediction = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/data/OCR_predictions/weekending.txt"
-file_path_labels = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/data/labels/test/weekending.txt"
-image_predictions = read_txt_file(file_path_prediction)
-image_labels = read_txt_file(file_path_labels)
-
-a = image_labels[0][1:]
-b = image_predictions[0]
+import os
 
 def convert(a):
     new_a = a.copy()
@@ -60,3 +40,73 @@ def get_iou(a, b, epsilon=1e-5):
     iou = area_overlap / (area_combined+epsilon)
     return iou
 
+
+def calculate_metrics(gt_bboxes, pred_bboxes):
+    tp = 0
+    fn = 0
+    fp = 0
+
+    d = {}
+    for i in range(len(pred_bboxes)):
+        d[i]= "fp"
+
+    for j in range(len(gt_bboxes)):
+        values = []
+        indices = []
+        for i in range(len(pred_bboxes)):
+            iou = get_iou(gt_bboxes[j][1:], pred_bboxes[i])
+            print(iou)
+            if iou>0.3:
+                values.append(iou)
+                indices.append(i)
+        if len(values) >0:
+            index = values.index(max(values))
+            for ind in indices:
+                if ind == indices[index]:
+                    d[ind] = "tp"
+        else:
+            fn += 1
+    tp = sum([1 for v in d.values() if d == "tp"])
+    fp = sum([1 for v in d.values() if d == "fp"])
+
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+
+    return tp, fp, fn, tp+fp+fn, precision, recall
+
+
+
+
+def read_txt_file(file_path):
+    result = []
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        for line in lines:
+            numbers = [float(num) for num in line.strip().split()]
+            result.append(numbers)
+    return result
+
+# Aquí només ho estem fent per una imatge, la idea seria tenir-hi el directori amb predictions i labels correctes
+# i que iteri per tots els elmeents dels directoris de 1 en 1 i calculi metriquis i dongui una preciosn, recall general per TOT
+file_path_prediction = ocr_predictions 
+file_path_labels = test_labels
+
+tp = 0
+fn = 0
+fp = 0
+total = 0
+
+for i,filename in enumerate(os.listdir(file_path_labels)):
+    gt_file = os.path.join(file_path_labels, filename)
+    pred_file = os.path.join(file_path_prediction, filename)
+
+    gt_bboxes = read_txt_file(gt_file)
+    pred_bboxes = read_txt_file(pred_file)
+
+    tp_, fp_, fn_, total, precision_, recall_ =  calculate_metrics(gt_bboxes, pred_bboxes)
+
+    tp += tp_
+    fp += fp_
+    fn += fn_
+    precision = precision_
+    recall = recall_
