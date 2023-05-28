@@ -5,13 +5,15 @@ import sys
 import string
 import os
 #sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
-sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01")
+#sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01")
+sys.path.insert(0, "/Users/abriil/github-classroom/DCC-UAB/xnap-project-ed_group_01")
 from YOLOv8.utils.utils import convert_bbox_to_yolo
 
-
-fonts = ["ARIAL.TTF", "CALIBRI.TTF", "COMIC.TTF", "CORBEL.TTF", "SEGOEPR.TTF", "BERNHC.TTF", "COLONNA.TTF", "FRSCRIPT.TTF", "HARLOWSI.TTF", "INKFREE.TTF", "ITCBLKAD.TTF", "JOKERMAN.TTF", "MTCORSVA.TTF", "VINERITC.TTF"]
-text_colors = ["#000000", "#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF"]
-background_colors = [ "#F8F8F8", "#E5E5E5", "#D2D2D2", "#FFFFFF", "#F0F0F0", "#FAFAFA", "#EFEFEF", "#F5F5F5"]
+path_fonts = '/Users/abriil/github-classroom/DCC-UAB/xnap-project-ed_group_01/generate_images/fonts'
+#["ARIAL.TTF", "CALIBRI.TTF", "COMIC.TTF", "CORBEL.TTF", "SEGOEPR.TTF", "BERNHC.TTF", "COLONNA.TTF","FRSCRIPT.TTF", "HARLOWSI.TTF", "INKFREE.TTF", "ITCBLKAD.TTF", "JOKERMAN.TTF", "MTCORSVA.TTF", "VINERITC.TTF","WEIRDW.TTF","DGLITCH.TTF", "AKHIR.TTF", "EXTRABLUR.TTF", "CROOKED.TTF"]
+fonts = os.listdir(path_fonts)
+text_colors = ["#000000", "#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#DDDDDD", "#C3C3C3", "#494949"]
+background_colors = [ "#F8F8F8", "#E5E5E5", "#D2D2D2", "#FFFFFF", "#F0F0F0", "#FAFAFA", "#EFEFEF", "#F5F5F5", "#C3C3C3"]
 list_char = "123456789abcdefghijklmnopqrstuvwxyz"
 
 dict_char = {k:i for i,k in enumerate(string.ascii_lowercase + string.digits)}
@@ -32,7 +34,7 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
             while text_color == background_color:
                 background_color = random.choice(background_colors)
             
-            font = ImageFont.truetype(f'"C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/generate_images/fonts/{font}', random.randint(25,40), encoding="unic")
+            font = ImageFont.truetype(path_fonts+f'/{font}', random.randint(25,40), encoding="unic")
             _, _, w, h = font.getbbox(new_str)
             size = (w + random.randint(10, 20), h + random.randint(10,20))
             img = Image.new(mode="RGB", size=size, color= background_color)
@@ -62,9 +64,11 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
 
 #train_labels = "/home/alumne/data/labels/train"
 #train_images = "/home/alumne/data/images/train"
-train_labels = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_annot"
-train_images = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_img"
-generate_images(2, train_labels, train_images)
+#train_labels = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_annot"
+#train_images = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/test/test_img"
+train_labels = "/Users/abriil/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/train/train_annot"
+train_images = "/Users/abriil/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/train/train_img"
+generate_images(5, train_labels, train_images)
 
 #test_labels = "/home/alumne/data/labels/test"
 #test_images = "/home/alumne/data/images/test"
