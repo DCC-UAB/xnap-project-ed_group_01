@@ -1,6 +1,10 @@
 import torch
 import torch.nn as nn
+<<<<<<< HEAD
 from torchinfo import summary
+=======
+#from torchinfo import summary
+>>>>>>> 0e2599059af93f483643b87f7b9bddad4839f216
 import string
 
 
