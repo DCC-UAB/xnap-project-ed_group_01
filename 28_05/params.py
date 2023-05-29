@@ -1,8 +1,8 @@
-train_labels = "/home/alumne/ProjecteNN/data_detection/random_words/data/labels/train"
-train_images = "/home/alumne/ProjecteNN/data_detection/random_words/data/images/train"
-test_labels = "/home/alumne/ProjecteNN/data_detection/random_words/data/labels/test"
-test_images = "/home/alumne/ProjecteNN/data_detection/random_words/data/images/test"
-path_fonts = "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05/generate_images/fonts"
+train_labels = "/home/alumne/Dataset/data_detection/random_chars/data/labels/train"
+train_images = "/home/alumne/Dataset/data_detection/random_chars/data/images/train"
+test_labels = "/home/alumne/Dataset/data_detection/random_chars/data/labels/test"
+test_images = "/home/alumne/Dataset/data_detection/random_chars/data/images/test"
+path_fonts = "/home/alumne/xnap-project-ed_group_01/28_05/generate_images/fonts"
 
 # YOLO
 data_yaml = "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05/Detection/YOLO/data.yaml"
@@ -11,12 +11,12 @@ data_yaml = "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05/Detection/YO
 ocr_predictions = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/data/OCR_predictions"
 
 # RECOGNITION (CNN)
-saved_model_cnn = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/Recognition/saved_model"
+saved_model_cnn = "/home/alumne/xnap-project-ed_group_01/28_05/Recognition/saved_model"
 
 # PIPELINE (YOLO)
-yolo_image_path = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/data/images/test/"
-yolo_model_path = 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/YOLO_recognition/checkpoints/last.pt'
-gt_yolo = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/data/labels/test"
+yolo_image_path = "/home/alumne/xnap-project-ed_group_01/28_05/data/images/test/"
+yolo_model_path = '/home/alumne/xnap-project-ed_group_01/YOLO_recognition/checkpoints/last.pt'
+gt_yolo = "/home/alumne/xnap-project-ed_group_01/28_05/data/labels/test"
 
 # PIPELINE (OCR+CNN i YOLO+CNN)
 type_model = "resnet"
