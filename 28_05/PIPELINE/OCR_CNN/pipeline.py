@@ -1,10 +1,15 @@
 # Posar-hi el codi per fer inferència -> calcular edit distance
 
+import sys
 import cv2
 import torch
+import os
+import editdistance
 from torchvision.transforms import ToTensor
+sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/Recognition")
 from model import CharacterClassifier
-from segment_words import segment_letters
+sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/Detection/OCR")
+from ocr import segment_letters
 from PIL import Image
 from torchvision.transforms import ToTensor, Normalize, Resize, Compose
 import string
@@ -12,8 +17,8 @@ sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_grou
 from params import *
 
 # Load the trained CNN model
-model = CharacterClassifier(num_classes=62, type_model = type_model)
-model.load_state_dict(torch.load(mode_cnn_entrenat,  map_location=torch.device('cpu')))
+model = CharacterClassifier(num_classes=36)
+model.load_state_dict(torch.load(model_cnn_entrenat,  map_location=torch.device('cpu')))
 model.eval()
 
 # Function to recognize text in an image
@@ -37,7 +42,7 @@ def recognize_text(image_file):
         ])
         
         character_crop = transforms(character_crop).unsqueeze(0)
-        index_to_char = {i:k for i,k in enumerate(string.ascii_lowercase + string.ascii_uppercase + string.digits)}
+        index_to_char = {i:k for i,k in enumerate(string.ascii_lowercase + string.digits)}
 
         # Pass the letter through the CNN model
         with torch.no_grad():
@@ -50,17 +55,16 @@ def recognize_text(image_file):
 
     # Join the recognized characters and return the final text
     return ''.join(recognized_text)
-
+    
 def metrics(predicted_labels, text_labels):
-    accur = sum([1 for i,j in zip(predicted_labels, text_labels) if i == j else 0])/len(predicted_labels)
+    accur = sum([1 if i == j else 0 for i,j in zip(predicted_labels, text_labels)])/len(predicted_labels)
     edit_dist = sum([editdistance.eval(p,t) for p,t in zip(predicted_labels, text_labels)])/len(predicted_labels)
     return edit_dist, accur
 
 predicted_labels = []
 text_labels = []
-for img_file in os.listdir(test_images):
-    predicted_word = recognize_text(os.path.join(test_images, image_file))
+for img_file in os.listdir(train_images):
+    predicted_word = recognize_text(os.path.join(train_images, img_file))
     predicted_labels.append(predicted_word)
     text_labels.append(img_file.split(".")[0])
 
-edit_dit, accur = metrics(predicted_labels, text_labels)

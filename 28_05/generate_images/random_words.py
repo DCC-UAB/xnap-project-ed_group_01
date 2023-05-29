@@ -5,10 +5,10 @@ import sys
 import string
 import os
 from random_word import RandomWords
-sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01')
+sys.path.insert(0, 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01')
 #sys.path.insert(0, "/Users/abriil/github-classroom/DCC-UAB/xnap-project-ed_group_01")
 from YOLOv8.utils.utils import convert_bbox_to_yolo
-sys.path.insert(0, '/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05')
+sys.path.insert(0, 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05')
 from params import *
 
 
@@ -18,7 +18,7 @@ background_colors = [ "#F8F8F8", "#E5E5E5", "#D2D2D2", "#FFFFFF", "#F0F0F0", "#F
 
 dict_char = {k:i for i,k in enumerate(string.ascii_lowercase + string.digits)}
 
-with open("/home/alumne/ProjecteNN/xnap-project-ed_group_01/Datasets/lexicon.txt", 'r') as file:
+with open("C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/Datasets/lexicon.txt", 'r') as file:
     words = file.readlines()
     words = [w[:-1] for w in words]
 
@@ -63,5 +63,5 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
             img.save(os.path.join(images_dir, f"{new_str}.jpg"))
 
 
-generate_images(4000, train_labels, train_images)
+generate_images(5, train_labels, train_images)
 #generate_images(5000, test_labels, test_images)

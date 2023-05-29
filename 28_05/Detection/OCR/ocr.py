@@ -66,6 +66,6 @@ def segment_letters(image_path, ocr_predictions = None, train = True):
     return letter_bboxes
 
 
-for i,filename in enumerate(os.listdir(test_images)):
-    f = os.path.join(test_images, filename)
-    segment_letters(f, ocr_predictions)
+#for i,filename in enumerate(os.listdir(test_images)):
+#    f = os.path.join(test_images, filename)
+#    segment_letters(f, ocr_predictions)
