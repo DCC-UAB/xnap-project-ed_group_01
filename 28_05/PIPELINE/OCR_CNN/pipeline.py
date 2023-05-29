@@ -63,8 +63,25 @@ def metrics(predicted_labels, text_labels):
 
 predicted_labels = []
 text_labels = []
+#### AMB EL NOSTRE DATASET
+#for img_file in os.listdir(train_images):
+#    predicted_word = recognize_text(os.path.join(train_images, img_file))
+#    predicted_labels.append(predicted_word)
+#    text_labels.append(img_file.split(".")[0])
+
+#### AMB EL IIT
+mapping = {str(i): char for i, char in enumerate(string.ascii_lowercase+string.digits)}
 for img_file in os.listdir(train_images):
     predicted_word = recognize_text(os.path.join(train_images, img_file))
     predicted_labels.append(predicted_word)
-    text_labels.append(img_file.split(".")[0])
+    txt_path = os.path.join(train_labels, img_file.split(".")[0]+".txt")
+    word = ""
+    with open(txt_path, 'r') as file:
+        for line in file:
+            index = line.split(" ")[0]
+            word += mapping.get(index)
+    text_labels.append(word)
 
+edit_dist, accur = metrics(predicted_labels, text_labels)
+print(edit_dist)
+print(accur)
