@@ -10,13 +10,13 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score
 import wandb
 import sys
 import os
-sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05")
+sys.path.insert(0, '/home/alumne/xnap-project-ed_group_01/28_05')
 from params import *
 
-run_explication = "CNN test"
-wandb.init(project="CNN", group="grup1", name= run_explication)
+run_explication = "bs64 lr0.001 adam"
+wandb.init(project="CNN Resnet", group="grup1", name= run_explication)
 
-num_epochs = 25
+num_epochs = 3
 batch_size = 64
 learning_rate = 0.001
 type_model = "resnet"
@@ -31,10 +31,10 @@ transforms = Compose([
 ])
 
 dataset_train = CharacterDataset(train_labels, train_images, transforms)
-dataset_test = CharacterDataset(test_labels, test_labels, transforms)
+dataset_test = CharacterDataset(test_labels, test_images, transforms)
 
 train_loader = DataLoader(dataset_train, batch_size=batch_size, shuffle=True)
-val_dataloader = DataLoader(dataset_test, batch_size=batch_size)
+val_dataloader = DataLoader(dataset_test, batch_size=batch_size, shuffle=True)
 
 model = CharacterClassifier(num_classes=36, type_model = type_model) 
 model.to(device)
@@ -50,7 +50,7 @@ for epoch in range(num_epochs):
     train_predictions = []
     train_labels = []
     model.train()
-    for images, labels in train_loader:
+    for i, (images, labels) in enumerate(train_loader):
         images = images.to(device)
         labels = labels.to(device)
 
@@ -67,37 +67,45 @@ for epoch in range(num_epochs):
         correct += (predicted == labels).sum().item()
         train_predictions.extend(predicted.tolist())
         train_labels.extend(labels.tolist())
+        if ((i + 1) % 100) == 0:
+            batch_loss = total_loss / 100
+            batch_accuracy = correct / total
+            train_precision = precision_score(train_labels, train_predictions, average='weighted')
+            train_recall = recall_score(train_labels, train_predictions, average='weighted')
+            #print(f"Epoch {epoch+1}/{num_epochs} - Loss: {batch_loss:.4f} - Accuracy: {batch_accuracy:.2f}%")
 
-    epoch_loss = total_loss / len(train_loader)
-    epoch_accuracy = 100 * correct / total
-    train_precision = precision_score(train_labels, train_predictions, average='weighted')
-    train_recall = recall_score(train_labels, train_predictions, average='weighted')
-    print(f"Epoch {epoch+1}/{num_epochs} - Loss: {epoch_loss:.4f} - Accuracy: {epoch_accuracy:.2f}%")
+            # Validation loop
+            model.eval()
+            val_predictions = []
+            val_labels = []
+            val_loss = 0.0
+            with torch.no_grad():
+                for j, (images, labels) in enumerate(val_dataloader):
+                    images = images.to(device)
+                    labels = labels.to(device)
 
-    # Validation loop
-    model.eval()
-    val_predictions = []
-    val_labels = []
-    val_loss = 0.0
-    with torch.no_grad():
-        for images, labels in val_dataloader:
-            images = images.to(device)
-            labels = labels.to(device)
+                    outputs = model(images)
+                    _, predicted = torch.max(outputs, 1)
 
-            outputs = model(images)
-            _, predicted = torch.max(outputs, 1)
+                    val_predictions.extend(predicted.tolist())
+                    val_labels.extend(labels.tolist())
+                    val_loss += criterion(outputs, labels).item()
+                    if j == 19:
+                        break
+            val_loss = val_loss/20               
+            val_accuracy = accuracy_score(val_labels, val_predictions)
+            val_precision = precision_score(val_labels, val_predictions, average='weighted')
+            val_recall = recall_score(val_labels, val_predictions, average='weighted')
+            print(f"Epoch [{epoch+1}/{num_epochs}], Validation Accuracy: {val_accuracy}")
 
-            val_predictions.extend(predicted.tolist())
-            val_labels.extend(labels.tolist())
-            val_loss += criterion(outputs, labels).item()
+            wandb.log({"Train Loss": batch_loss, "Train Accuracy": batch_accuracy, "Train Precision": train_precision, "Train Recall": train_recall})
+            wandb.log({"Validation Loss": val_loss,"Validation Accuracy": val_accuracy, "Validation Precision": val_precision, "Validation Recall": val_recall})
 
-    val_accuracy = accuracy_score(val_labels, val_predictions)
-    val_precision = precision_score(val_labels, val_predictions, average='weighted')
-    val_recall = recall_score(val_labels, val_predictions, average='weighted')
-    print(f"Epoch [{epoch+1}/{num_epochs}], Validation Accuracy: {val_accuracy}")
+            total_loss = 0.0
+            correct = 0
+            total = 0
+            train_predictions = []
+            train_labels = []
+            model.train()
 
-    wandb.log({"Train Loss": epoch_loss, "Train Accuracy": epoch_accuracy, "Train Precision": train_precision, "Train Recall": train_recall})
-    wandb.log({"Validation Loss": val_loss,"Validation Accuracy": val_accuracy, "Validation Precision": val_precision, "Validation Recall": val_recall})
-
-
-torch.save(model.state_dict(), os.path.join(saved_model_cnn, f'{type_model}.pt'))
+    torch.save(model.state_dict(), os.path.join(saved_model_cnn, f'{type_model}.pt'))
