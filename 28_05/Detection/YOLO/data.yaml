@@ -1,6 +1,6 @@
-path: /home/alumne/ProjecteNN/data_detection/random_chars/data
-train: /home/alumne/ProjecteNN/data_detection/random_chars/data/images/train
-val: /home/alumne/ProjecteNN/data_detection/random_chars/data/images/test
+path: /home/alumne/ProjecteNN/data_detection/random_words/data
+train: /home/alumne/ProjecteNN/data_detection/random_words/data/images/train
+val: /home/alumne/ProjecteNN/data_detection/random_words/data/images/test
 
 # Classes
 nc: 1

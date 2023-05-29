@@ -1,9 +1,6 @@
 from ultralytics import YOLO
-import sys
-sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05")
-from params import *
 
 # Load model
-model = YOLO("yolov8n.yaml")
+model = YOLO('yolov8.yaml')
 
-results = model.train(data = data_yaml, epochs = 3, task = "detect")
+results = model.train(data = "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05/PIPELINE/YOLO/data_recog.yaml", epochs = 5, task = "detect")
