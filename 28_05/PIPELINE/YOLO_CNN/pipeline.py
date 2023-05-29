@@ -5,16 +5,20 @@ from PIL import Image
 import torch
 from ultralytics import YOLO
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 import editdistance
-sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/Recognition")
+import glob
+sys.path.insert(0, "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05/Recognition")
 from model import CharacterClassifier
 from torchvision.transforms import ToTensor, Normalize, Resize, Compose
 from torchvision import transforms
-sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05")
+sys.path.insert(0, "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05")
 from params import *
 
 # Load the trained CNN model
-model = CharacterClassifier(num_classes=36, type_model = type_model)
+model = CharacterClassifier(num_classes=36)
 model.load_state_dict(torch.load(model_cnn_entrenat,  map_location=torch.device('cpu')))
 model.eval()
 
@@ -24,7 +28,7 @@ def recognize_text(image_path, yolo_model_path):
     image = Image.open(image_path)
     results = model_yolo(image)
 
-    predictions = results[0].boxes.xyxy.numpy()
+    predictions = results[0].boxes.xyxy.cpu().data.numpy()
     sorted_indices = np.argsort(predictions[:, 0])
     sorted_predictions = predictions[sorted_indices]
 
@@ -42,7 +46,10 @@ def recognize_text(image_path, yolo_model_path):
         Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize the image
         ])
 
-        character_crop = transforms(character_crop).unsqueeze(0)
+        try:
+            character_crop = transforms(character_crop).unsqueeze(0)
+        except:
+            return None
         index_to_char = {i:k for i,k in enumerate(string.ascii_lowercase + string.digits)}
 
         with torch.no_grad():
@@ -56,34 +63,77 @@ def recognize_text(image_path, yolo_model_path):
 
 def metrics(predicted_labels, text_labels):
     accur = sum([1 if i == j else 0 for i,j in zip(predicted_labels, text_labels)])/len(predicted_labels)
+    accur_2 = sum([1 if editdistance.eval(i,j) < 2 else 0 for i,j in zip(predicted_labels, text_labels)])/len(predicted_labels)
     edit_dist = sum([editdistance.eval(p,t) for p,t in zip(predicted_labels, text_labels)])/len(predicted_labels)
-    return edit_dist, accur
+    return edit_dist, accur, accur_2
 
 
 predicted_labels = []
 text_labels = []
-
+images_paths = []
+file_list = glob.glob(test_images + '/*')
+file_count = len(file_list)
 ### AMB EL NOSTRE DATASET
-#for img_file in os.listdir(train_images):
-#    predicted_word = recognize_text(os.path.join(train_images, img_file), model_yolo_entrenat)
-#    predicted_labels.append(predicted_word)
-#    #text_labels.append(img_file.split(".")[0])
-#    text_labels.append(img_file.split("_")[1])
-
-### AMB EL IIT
-mapping = {str(i): char for i, char in enumerate(string.ascii_lowercase+string.digits)}
-for img_file in os.listdir(train_images):
-    predicted_word = recognize_text(os.path.join(train_images, img_file), model_yolo_entrenat)
+"""
+for i,img_file in enumerate(os.listdir(test_images)):
+    predicted_word = recognize_text(os.path.join(test_images, img_file), model_yolo_entrenat)
     predicted_labels.append(predicted_word)
-    txt_path = os.path.join(train_labels, img_file.split(".")[0]+".txt")
+    text_labels.append(img_file.split(".")[0])
+    #text_labels.append(img_file.split("_")[1])
+    images_paths.append(os.path.join(test_images, img_file))
+    print(f"{i}/{file_count}")
+"""
+### AMB EL IIT
+
+mapping = {str(i): char for i, char in enumerate(string.ascii_lowercase+string.digits)}
+for i,img_file in enumerate(os.listdir(test_images)):
+    predicted_word = recognize_text(os.path.join(test_images, img_file), model_yolo_entrenat)
+    if predicted_word == None:
+        continue
+    predicted_labels.append(predicted_word)
+    txt_path = os.path.join(test_labels, img_file.split(".")[0]+".txt")
     word = ""
     with open(txt_path, 'r') as file:
         for line in file:
             index = line.split(" ")[0]
             word += mapping.get(index)
     text_labels.append(word)
+    print(f"{i}/{file_count}")
 
-edit_dist, accur = metrics(predicted_labels, text_labels)
+edit_dist, accur, accur2 = metrics(predicted_labels, text_labels)
 print(edit_dist)
 print(accur)
+print(accur2)
+with open('predicted_labels.txt', 'w') as file:
+    # Write each item in the list to a new line in the file
+    for item in predicted_labels:
+        file.write(item + '\n')
+with open('images_paths.txt', 'w') as file:
+    # Write each item in the list to a new line in the file
+    for item in images_paths:
+        file.write(item + '\n')
 
+# Get all unique letters from both ground truth and predicted words
+letters = list(set(''.join(text_labels + predicted_labels)))
+
+# Create a confusion matrix of zeros
+confusion_mat = np.zeros((len(letters), len(letters)), dtype=int)
+
+# Iterate over each word pair
+for gt_word, pred_word in zip(text_labels, predicted_labels):
+    # Iterate over each letter pair
+    for gt_letter, pred_letter in zip(gt_word, pred_word):
+        # Increment the corresponding cell in the confusion matrix
+        gt_index = letters.index(gt_letter)
+        pred_index = letters.index(pred_letter)
+        confusion_mat[gt_index][pred_index] += 1
+
+confusion_df = pd.DataFrame(confusion_mat, index=letters, columns=letters)
+
+# Plot the confusion matrix as a heatmap
+plt.figure(figsize=(10, 8))
+sns.heatmap(confusion_df, annot=False, fmt='d', cmap='Blues', cbar=False)
+plt.xlabel('Predicted')
+plt.ylabel('Ground Truth')
+plt.title('Confusion Matrix OCR + CNN')
+plt.show()
