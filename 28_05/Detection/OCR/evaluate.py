@@ -41,7 +41,7 @@ def get_iou(a, b, epsilon=1e-5):
     return iou
 
 
-def calculate_metrics(gt_bboxes, pred_bboxes):
+def calculate_metrics(gt_bboxes, pred_bboxes, th):
     tp = 0
     fn = 0
     fp = 0
@@ -55,8 +55,7 @@ def calculate_metrics(gt_bboxes, pred_bboxes):
         indices = []
         for i in range(len(pred_bboxes)):
             iou = get_iou(gt_bboxes[j][1:], pred_bboxes[i])
-            print(iou)
-            if iou>0.3:
+            if iou>th:
                 values.append(iou)
                 indices.append(i)
         if len(values) >0:
@@ -66,8 +65,10 @@ def calculate_metrics(gt_bboxes, pred_bboxes):
                     d[ind] = "tp"
         else:
             fn += 1
-    tp = sum([1 for v in d.values() if d == "tp"])
-    fp = sum([1 for v in d.values() if d == "fp"])
+    
+    tp = sum([1 for v in d.values() if v == "tp"])
+    
+    fp = sum([1 for v in d.values() if v == "fp"])
 
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
@@ -91,22 +92,31 @@ def read_txt_file(file_path):
 file_path_prediction = ocr_predictions 
 file_path_labels = test_labels
 
-tp = 0
-fn = 0
-fp = 0
-total = 0
+all_precision = []
+all_recall = []
 
-for i,filename in enumerate(os.listdir(file_path_labels)):
-    gt_file = os.path.join(file_path_labels, filename)
-    pred_file = os.path.join(file_path_prediction, filename)
+import numpy as np
 
-    gt_bboxes = read_txt_file(gt_file)
-    pred_bboxes = read_txt_file(pred_file)
+for th in np.arange(0.4):
+    precision = []
+    recall = []
+    for i,filename in enumerate(os.listdir(file_path_labels)):
+        gt_file = os.path.join(file_path_labels, filename)
+        pred_file = os.path.join(file_path_prediction, filename)
 
-    tp_, fp_, fn_, total, precision_, recall_ =  calculate_metrics(gt_bboxes, pred_bboxes)
+        gt_bboxes = read_txt_file(gt_file)
+        pred_bboxes = read_txt_file(pred_file)
+        
+        tp_, fp_, fn_, total, precision_, recall_ =  calculate_metrics(gt_bboxes, pred_bboxes, th)
 
-    tp += tp_
-    fp += fp_
-    fn += fn_
-    precision = precision_
-    recall = recall_
+        precision.append(precision_)
+        recall.append(recall_)
+        if i%100 == 0:
+            print(i)
+    all_precision.append(sum(precision)/len(precision))
+    all_recall.append(sum(recall)/len(recall))
+    print("th")
+
+
+print(all_precision)
+print(all_recall)
