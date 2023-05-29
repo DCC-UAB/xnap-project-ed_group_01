@@ -27,6 +27,22 @@ def decode_predictions(text_batch_logits):
 
     return text_batch_tokens_new
 
+def decode(self, logits):
+        tokens = logits.softmax(2).argmax(2).squeeze(1)
+        
+        tokens = ''.join([self.idx2char[token] 
+                        if token != 0  else '-' 
+                        for token in tokens.numpy()])
+        tokens = tokens.split('-')
+        
+        text = [char 
+                for batch_token in tokens 
+                for idx, char in enumerate(batch_token)
+                if char != batch_token[idx-1] or len(batch_token) == 1]
+        text = ''.join(text)
+        
+        return text
+
 def decode_to_text(dig_lst):
     # decoding each digit into output word
     char_list = string.ascii_letters + string.digits
@@ -111,7 +127,7 @@ with torch.no_grad():
     results_test = pd.DataFrame(columns=['actual', 'prediction'])
     for images,labels,orig_labels,label_length,input_length in test_dataloader:
         text_batch_logits = crnn(images)
-        text_batch_pred = decode_predictions(text_batch_logits)
+        text_batch_pred = decode(text_batch_logits)
         df = pd.DataFrame(columns=['actual', 'prediction'])
         df['actual'] = orig_labels
         df['prediction'] = text_batch_pred
