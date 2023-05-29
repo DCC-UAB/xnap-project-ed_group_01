@@ -1,4 +1,4 @@
-path: /home/alumne/ProjecteNN/data_detection/random_words/data
+path: /home/alumne/Dataset/data_detection/random_chars/data/
 train: images/train
 val: images/test
 

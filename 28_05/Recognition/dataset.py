@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw
 from torch.utils.data import Dataset
 import string
 import sys
-sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05")
+sys.path.insert(0, '/home/alumne/xnap-project-ed_group_01/28_05')
 from params import *
 
 class CharacterDataset(Dataset):
@@ -32,11 +32,11 @@ class CharacterDataset(Dataset):
 
         image_path = os.path.join(self.image_dir, image_file)
         image = Image.open(image_path)
-        draw = ImageDraw.Draw(image)
+        #draw = ImageDraw.Draw(image)
         w, h = image.size
         x1, y1, x2, y2 = self.convert(annotation['bbox'], w, h)
-        draw.rectangle((x1, y1, x2, y2), None, "#f00")
-        image.show()
+        #draw.rectangle((x1, y1, x2, y2), None, "#f00")
+        ###image.show()
         character_crop = image.crop((x1, y1, x2, y2))
 
         if self.transforms != None:
@@ -61,6 +61,3 @@ class CharacterDataset(Dataset):
                     annotations.append(annotation)
                     file_path.append(annotation_file.split(".")[0] + ".jpg")
         return annotations, file_path
-
-dataset = CharacterDataset(test_labels, test_images)
-print(dataset[0])
