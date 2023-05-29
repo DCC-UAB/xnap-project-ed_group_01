@@ -55,13 +55,13 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
 
                 bbox_yolo = convert_bbox_to_yolo((left, top, width, height), size[0], size[1])
 
-                char_index = 0 #comment for multiclass
-                #char_index = dict_char[char]
+                #char_index = 0 #comment for multiclass
+                char_index = dict_char[char]
                 file.write(f"{char_index} {bbox_yolo[0]} {bbox_yolo[1]} {bbox_yolo[2]} {bbox_yolo[3]}\n")
             
             file.close()
             img.save(os.path.join(images_dir, f"{new_str}.jpg"))
 
 
-#generate_images(4000, train_labels, train_images)
-#generate_images(200, test_labels, test_images)
+generate_images(4000, train_labels, train_images)
+#generate_images(5000, test_labels, test_images)
