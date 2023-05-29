@@ -1,6 +1,6 @@
-path: /home/alumne/ProjecteNN/data_detection/random_words/data
-train: /home/alumne/ProjecteNN/data_detection/random_words/data/images/train
-val: /home/alumne/ProjecteNN/data_detection/random_words/data/images/test
+path: /home/alumne/ProjecteNN/data_detection/IIT/
+train: /home/alumne/ProjecteNN/data_detection/IIT/images/train
+val: /home/alumne/ProjecteNN/data_detection/IIT/images/test
 
 # Classes
 nc: 1
