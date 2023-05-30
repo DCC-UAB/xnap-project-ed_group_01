@@ -14,16 +14,16 @@ from tqdm.auto import tqdm
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def model_pipeline(cfg:dict) -> None:
-    with wandb.init(project="PHOCnet", config=cfg):
+    with wandb.init(project="PHOCnet_final", config=cfg):
         config = wandb.config
 
         model, train_loader, test_loader, criterion, optimizer, scheduler = make(config, device)
         
-        train(model, train_loader, test_loader, criterion, optimizer, scheduler, config, device)
+        model = train(model, train_loader, test_loader, criterion, optimizer, scheduler, config, device)
 
         return model
 
-with open('xavi_ruc/params.yml', 'r') as file:
+with open('/home/alumne/xnap-project-ed_group_01/28_05/PIPELINE/PHOCNET/params.yml', 'r') as file:
     configuration = yaml.safe_load(file)
 
 if __name__ == "__main__":
@@ -32,7 +32,9 @@ if __name__ == "__main__":
     config = dict(
         train_dir=configuration["train_dir"],
         test_dir=configuration["test_dir"],
-        epochs=50,
+        epochs=8,
         batch_size= 8,
-        learning_rate=0.01)
+        learning_rate=0.001,
+        save_model = configuration["save_model"])
     model = model_pipeline(config)      
+    

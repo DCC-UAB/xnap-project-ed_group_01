@@ -91,7 +91,7 @@ def phoc(raw_word):
     
     phoc_bigrams = []
     i = 0
-    with open('PHOC_UNET/utils/bigrams_new.txt','r') as f:
+    with open('/home/alumne/xnap-project-ed_group_01/PHOC_UNET/utils/bigrams_new.txt','r') as f:
         for line in f:
             a = line.split()
             phoc_bigrams.append(a[0].lower())

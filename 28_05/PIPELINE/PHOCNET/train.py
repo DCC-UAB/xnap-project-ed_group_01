@@ -3,6 +3,8 @@ import wandb
 from test import test
 from utils.wandb_logs import *
 from utils.predict_with_PHOC import load_model
+import torch
+import os
 
 def train(model, train_loader, test_loader, criterion, optimizer, scheduler, config, device = "cuda"):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more!
@@ -29,7 +31,8 @@ def train(model, train_loader, test_loader, criterion, optimizer, scheduler, con
         
         scheduler.step(loss_test)
         print(scheduler._last_lr)
-
+        torch.save(model.state_dict(), os.path.join(config.save_model, f"PHOCNET{epoch}.pt"))
+    return model
 
 def train_batch(images, labels, model, optimizer, criterion, device="cuda"):
     images, labels = images.to(device), labels.to(device)

@@ -9,7 +9,7 @@ class dataset(Dataset):
     def __init__(self, img_dir, transform = None):
         
         self.paths = os.listdir(img_dir)
-        #self.paths = self.paths[:int(len(self.paths)*0.1)]
+        #self.paths = self.paths[:int(len(self.paths)*0.01)]
         self.img_dir = img_dir
         self.transform = transform
 

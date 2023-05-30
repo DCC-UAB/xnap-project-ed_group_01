@@ -5,7 +5,7 @@ import pickle
 import os
 
 
-annotations_file = "Datasets/lexicon.txt"
+annotations_file = "/home/alumne/xnap-project-ed_group_01/Datasets/lexicon.txt"
 
 with open(annotations_file, "r") as file:
     list_of_words = file.readlines()
@@ -20,7 +20,7 @@ phoc_representations = phoc(list_of_words)
 knn = KNeighborsClassifier(n_neighbors=1)
 knn.fit(phoc_representations, list_of_words)
 
-knnPickle = open('xavi_ruc/utils/knn_classifier', 'wb') 
+knnPickle = open('/home/alumne/xnap-project-ed_group_01/28_05/PIPELINE/PHOCNET/utils/knn_classifier', 'wb') 
 pickle.dump(knn, knnPickle)  
 knnPickle.close()
 

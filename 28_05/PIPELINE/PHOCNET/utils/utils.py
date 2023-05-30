@@ -29,12 +29,12 @@ def make(config, device="cuda"):
 
     transforms_train = transforms.Compose([
         transforms.Resize((64, 128), antialias=True),
-        transforms.Normalize(mean=[0.445313568], std=[0.26924618])
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
     transforms_test = transforms.Compose([
         transforms.Resize((64, 128), antialias=True),
-        transforms.Normalize(mean=[0.445313568], std=[0.26924618])
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
     train, test = get_data(config.train_dir, transforms_train), get_data(config.test_dir, transforms_test)
@@ -43,7 +43,7 @@ def make(config, device="cuda"):
     test_loader = make_loader(test, config.batch_size)
 
     # Make the model
-    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 1).to(device)
+    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
     model.apply(init_weights_model)
     """model = models.resnet18(pretrained=True) 
     set_parameter_requires_grad(model,True)
@@ -60,9 +60,10 @@ def make(config, device="cuda"):
     criterion = torch.nn.BCEWithLogitsLoss(reduction = 'mean', pos_weight=pos_weight)
 
     optimizer = torch.optim.SGD(model.parameters(), lr=config.learning_rate, momentum=0.9)
-    scheduler = StepLR(optimizer, step_size=4, gamma=0.3)
+    #optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)
+    scheduler = StepLR(optimizer, step_size=2, gamma=0.3)
     #scheduler = CosineAnnealingLR(optimizer, T_max=10)
-    #scheduler = ReduceLROnPlateau(optimizer, patience = 3, factor = 0.3)
+    #scheduler = ReduceLROnPlateau(optimizer, patience = 2, factor = 0.1)
     
     return model, train_loader, test_loader, criterion, optimizer, scheduler
 
