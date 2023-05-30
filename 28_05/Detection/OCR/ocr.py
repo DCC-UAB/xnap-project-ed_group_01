@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw
 import string
 import glob
 import sys
-sys.path.insert(0, "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05")
+sys.path.insert(0, "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05")
 from params import *
 
 def convert_bbox_to_yolo(bbox, image_width, image_height):
