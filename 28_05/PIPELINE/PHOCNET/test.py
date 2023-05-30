@@ -38,7 +38,7 @@ def test(model, test_loader, train_loader, epoch, criterion, model_phoc, device=
             edit_train += sum([editdistance.eval(p,t) for p,t in zip(predicted_labels, text_labels)])
             if i == 0:
                 log_images(images, predicted_labels, text_labels[:5], epoch, "Train")
-            if i == 50:
+            if i == 150:
                break
 
         loss_test = loss_test/len(test_loader)

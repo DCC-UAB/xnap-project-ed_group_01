@@ -28,6 +28,7 @@ def draw_images(images, text_labels, predicted_labels):
     return images
 
 def draw_one_image(image, text_label, predicted_label):
+    image = image.convert("RGB")
     draw = ImageDraw.Draw(image)
     if text_label == predicted_label:
         color = "green"

@@ -29,12 +29,12 @@ def make(config, device="cuda"):
 
     transforms_train = transforms.Compose([
         transforms.Resize((64, 128), antialias=True),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        transforms.Normalize(mean=[0.445313568], std=[0.26924618])
     ])
 
     transforms_test = transforms.Compose([
         transforms.Resize((64, 128), antialias=True),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        transforms.Normalize(mean=[0.445313568], std=[0.26924618])
     ])
 
     train, test = get_data(config.train_dir, transforms_train), get_data(config.test_dir, transforms_test)
@@ -43,7 +43,7 @@ def make(config, device="cuda"):
     test_loader = make_loader(test, config.batch_size)
 
     # Make the model
-    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 3).to(device)
+    model = PHOCNet(n_out = train[0][1].shape[0], input_channels = 1).to(device)
     model.apply(init_weights_model)
     """model = models.resnet18(pretrained=True) 
     set_parameter_requires_grad(model,True)
@@ -80,7 +80,7 @@ def create_weights(file_words):
     phoc_representations = phoc(list_of_words)
     suma = np.sum(phoc_representations, axis=0)
     weights = phoc_representations.shape[0]/(suma+1e-6) 
-    weights = (1 + (weights/max(weights)))*3
+    weights = (1 + (weights/max(weights)))*5
     return weights
 
 def set_parameter_requires_grad(model, feature_extracting):

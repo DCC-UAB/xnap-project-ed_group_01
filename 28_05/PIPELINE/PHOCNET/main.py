@@ -14,7 +14,7 @@ from tqdm.auto import tqdm
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def model_pipeline(cfg:dict) -> None:
-    with wandb.init(project="PHOCnet_final", config=cfg):
+    with wandb.init(project="PHOCnet_BN", config=cfg):
         config = wandb.config
 
         model, train_loader, test_loader, criterion, optimizer, scheduler = make(config, device)
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         test_dir=configuration["test_dir"],
         epochs=8,
         batch_size= 8,
-        learning_rate=0.001,
+        learning_rate=0.01,
         save_model = configuration["save_model"])
     model = model_pipeline(config)      
     
