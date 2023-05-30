@@ -6,14 +6,15 @@ import torch.optim.lr_scheduler as lrs
 import time
 import torch.nn.functional as F
 import string
+import wandb
 
 import pandas as pd
 
-<<<<<<< HEAD
 from dataset2 import *
 
 from model import *
 
+wandb.init(project="CRNN", group="grup1", name= "CRNN loss curve")
 
 def decode_predictions(text_batch_logits):
 
@@ -91,72 +92,6 @@ criterion = nn.CTCLoss(blank = 0)
 optimizer = optim.Adam(crnn.parameters(), lr=learning_rate)
 scheduler = lrs.StepLR(optimizer, step_size=5, gamma=0.8)
 
-=======
-import numpy as np
-
-from dataset import *
-
-from model import *
-
-
-def decode_predictions(text_batch_logits):
-
-    text_batch_tokens = F.softmax(text_batch_logits, 2).argmax(2) # [T, batch_size]
-    text_batch_tokens = text_batch_tokens.cpu().data.numpy().T # [batch_size, T]
-
-    text_batch_tokens_new = []
-    for text_tokens in text_batch_tokens:
-        text = decode_to_text(text_tokens)
-        #text = "".join(text)
-        text_batch_tokens_new.append(text)
-
-    return text_batch_tokens_new
-
-def decode_to_text(dig_lst):
-    # decoding each digit into output word
-    char_list = string.ascii_letters + string.digits
-    txt = ""
-    for index in dig_lst:
-        try:
-            txt += char_list[index]
-        except IndexError:
-            print("Invalid index:", index)
-    
-    return txt
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-batch_size = 128
-learning_rate = 0.1
-num_epochs = 100
-
-train_dataset = Dataset("/home/alumne/ocr_cnn_data/images", train = True)
-test_dataset = Dataset("/home/alumne/ocr_cnn_data/images", train = False)
-
-train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-
-def weights_init(m):
-    classname = m.__class__.__name__
-    if type(m) in [nn.Linear, nn.Conv2d, nn.Conv1d]:
-        torch.nn.init.xavier_uniform_(m.weight)
-        if m.bias is not None:
-            m.bias.data.fill_(0.01)
-    elif classname.find('BatchNorm') != -1:
-        m.weight.data.normal_(1.0, 0.02)
-        m.bias.data.fill_(0)
-
-char_list = string.ascii_letters+string.digits
-num_classes = len(char_list) + 1
-crnn = CRNN(num_classes)
-crnn.to(device)
-crnn.apply(weights_init)
-
-criterion = nn.CTCLoss(blank = 0)
-optimizer = optim.Adam(crnn.parameters(), lr=learning_rate)
-scheduler = lrs.StepLR(optimizer, step_size=10, gamma=0.8)
-
->>>>>>> 0e2599059af93f483643b87f7b9bddad4839f216
 epoch_losses = []
 iteration_losses = []
 for epoch in range(num_epochs):
@@ -186,23 +121,6 @@ for epoch in range(num_epochs):
     epoch_loss = np.mean(epoch_loss_list)
     print("Epoch:{}    Loss:{}".format(epoch+1, epoch_loss))
     epoch_losses.append(epoch_loss)
-<<<<<<< HEAD
-
-    scheduler.step()
-
-crnn.eval()
-with torch.no_grad():
-    results_test = pd.DataFrame(columns=['actual', 'prediction'])
-    for images,labels,orig_labels,label_length,input_length in test_dataloader:
-        text_batch_logits = crnn(images)
-        text_batch_pred = decode(text_batch_logits)
-        df = pd.DataFrame(columns=['actual', 'prediction'])
-        df['actual'] = orig_labels
-        df['prediction'] = text_batch_pred
-        results_test = pd.concat([results_test, df])
-
-results_test.head(10)
-=======
 
     crnn.eval()
     with torch.no_grad():
@@ -215,18 +133,6 @@ results_test.head(10)
         val_epoch_loss = np.mean(val_loss)
         print("Epoch:{}    Val Loss:{}".format(epoch+1, val_epoch_loss))
 
+    wandb.log({"Train Loss": epoch_loss})
+    wandb.log({"Validation Loss": val_epoch_loss})
     scheduler.step()
-
-crnn.eval()
-with torch.no_grad():
-    results_test = pd.DataFrame(columns=['actual', 'prediction'])
-    for images,labels,orig_labels,label_length,input_length in test_dataloader:
-        text_batch_logits = crnn(images.to(device))
-        text_batch_pred = decode_predictions(text_batch_logits)
-        df = pd.DataFrame(columns=['actual', 'prediction'])
-        df['actual'] = orig_labels
-        df['prediction'] = text_batch_pred
-        results_test = pd.concat([results_test, df])
-
-df.to_csv("/home/alumne/ProjecteNN/xnap-project-ed_group_01/CRNN_implementation/results.csv", index=False)
->>>>>>> 0e2599059af93f483643b87f7b9bddad4839f216
