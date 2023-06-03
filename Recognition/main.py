@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score
 import wandb
 import sys
 import os
-sys.path.insert(0, '/home/alumne/xnap-project-ed_group_01/28_05')
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from params import *
 
 run_explication = "bs64 lr0.001 adam"

@@ -1,8 +1,8 @@
 import sys
-sys.path.insert(0, "/Users/xavid/Documents/GitHub/xnap-project-ed_group_01/28_05")
-from params import *
-from PIL import Image, ImageDraw
 import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__)))[:-9])
+from params import *
+
 
 def convert(a):
     new_a = a.copy()
@@ -75,9 +75,6 @@ def calculate_metrics(gt_bboxes, pred_bboxes, th):
 
     return tp, fp, fn, tp+fp+fn, precision, recall
 
-
-
-
 def read_txt_file(file_path):
     result = []
     with open(file_path, 'r') as file:
@@ -87,36 +84,24 @@ def read_txt_file(file_path):
             result.append(numbers)
     return result
 
-# Aquí només ho estem fent per una imatge, la idea seria tenir-hi el directori amb predictions i labels correctes
-# i que iteri per tots els elmeents dels directoris de 1 en 1 i calculi metriquis i dongui una preciosn, recall general per TOT
 file_path_prediction = ocr_predictions 
-file_path_labels = test_labels
+file_path_labels = train_labels
 
-all_precision = []
-all_recall = []
+precision = []
+recall = []
+th = 0.5
 
-import numpy as np
+for i,filename in enumerate(os.listdir(file_path_labels)):
+    gt_file = os.path.join(file_path_labels, filename)
+    pred_file = os.path.join(file_path_prediction, filename)
 
-for th in np.arange(0.4):
-    precision = []
-    recall = []
-    for i,filename in enumerate(os.listdir(file_path_labels)):
-        gt_file = os.path.join(file_path_labels, filename)
-        pred_file = os.path.join(file_path_prediction, filename)
+    gt_bboxes = read_txt_file(gt_file)
+    pred_bboxes = read_txt_file(pred_file)
+    
+    tp_, fp_, fn_, total, precision_, recall_ =  calculate_metrics(gt_bboxes, pred_bboxes, th)
 
-        gt_bboxes = read_txt_file(gt_file)
-        pred_bboxes = read_txt_file(pred_file)
-        
-        tp_, fp_, fn_, total, precision_, recall_ =  calculate_metrics(gt_bboxes, pred_bboxes, th)
+    precision.append(precision_)
+    recall.append(recall_)
 
-        precision.append(precision_)
-        recall.append(recall_)
-        if i%100 == 0:
-            print(i)
-    all_precision.append(sum(precision)/len(precision))
-    all_recall.append(sum(recall)/len(recall))
-    print("th")
-
-
-print(all_precision)
-print(all_recall)
+print(f"Precision: {sum(precision)/len(precision)}")
+print(f"Recall: {sum(recall)/len(recall)}")

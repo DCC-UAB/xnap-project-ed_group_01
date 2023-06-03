@@ -1,11 +1,7 @@
 import cv2
 import os
-#import pytesseract
-from PIL import Image, ImageDraw
-import string
-import glob
 import sys
-sys.path.insert(0, "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05")
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__)))[:-9])
 from params import *
 
 def convert_bbox_to_yolo(bbox, image_width, image_height):
@@ -26,7 +22,7 @@ def convert_bbox_to_yolo(bbox, image_width, image_height):
     # Return the bounding box in YOLO format
     return yolo_center_x, yolo_center_y, yolo_width, yolo_height
 
-def segment_letters(image_path, ocr_predictions = None, train = True):
+def segment_letters(image_path, ocr_predictions = None, train = None):
     image = cv2.imread(image_path)
     
     if image is None:
@@ -57,7 +53,7 @@ def segment_letters(image_path, ocr_predictions = None, train = True):
         annotations.append(annotation)
 
     if train:
-        with open(os.path.join(ocr_predictions, image_path.split("\\")[1].split(".")[0]+".txt"), 'w') as f:
+        with open(os.path.join(ocr_predictions, image_path.split("\\")[-1].split(".")[0]+".txt"), 'w') as f:
             f.write('\n'.join(annotations))
             f.write('\n')
     else:
@@ -65,7 +61,7 @@ def segment_letters(image_path, ocr_predictions = None, train = True):
     
     return letter_bboxes
 
+for i,filename in enumerate(os.listdir(train_images)):
+    f = os.path.join(train_images, filename)
+    segment_letters(f, ocr_predictions, True)
 
-#for i,filename in enumerate(os.listdir(test_images)):
-#    f = os.path.join(test_images, filename)
-#    segment_letters(f, ocr_predictions)

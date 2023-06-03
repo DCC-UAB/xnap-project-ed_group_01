@@ -1,5 +1,18 @@
 from ultralytics import YOLO
 
+import yaml
+
+info = {
+    "path": path_yolo,
+    "train": train_images,
+    "val": test_images,
+    "nc": 1,
+    "names": ['character']
+}
+with open(data_yaml, 'w') as outfile:
+    yaml.dump(info, outfile, default_flow_style=True)
+
+
 # Load model
 model = YOLO('yolov8.yaml')
 

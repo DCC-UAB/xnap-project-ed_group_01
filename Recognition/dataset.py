@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw
 from torch.utils.data import Dataset
 import string
 import sys
-sys.path.insert(0, '/home/alumne/xnap-project-ed_group_01/28_05')
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from params import *
 
 class CharacterDataset(Dataset):
