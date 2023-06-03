@@ -6,16 +6,16 @@ from params import *
 import yaml
 
 info = {
-    "path": path_yolo,
-    "train": train_images,
-    "val": test_images,
+    "path": path_yolo_detection,
+    "train": train_images_yolo_detection,
+    "val": test_images_yolo_detection,
     "nc": 1,
     "names": ['character']
 }
-with open(data_yaml, 'w') as outfile:
+with open(data_yaml_detection, 'w') as outfile:
     yaml.dump(info, outfile, default_flow_style=True)
 
 # Load model
 model = YOLO("yolov8n.yaml")
 
-results = model.train(data = data_yaml, epochs = 50, task = "detect")
+results = model.train(data = data_yaml_detection, epochs = 50, task = "detect")
