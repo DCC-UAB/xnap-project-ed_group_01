@@ -1,8 +1,17 @@
-train_labels = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/prova/labels"
-train_images = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/prova/images"
-test_labels = "/home/alumne/ProjecteNN/data_detection/IIT/labels/test"
-test_images = "/home/alumne/ProjecteNN/data_detection/IIT/images/train"
-path_fonts = "C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05/generate_images/fonts"
+import os
+parent = os.getcwd()
+
+# GENERATE IMAGES
+multiclass = True
+folder = "oneclass_randomchars"
+n_train_images = 10
+n_test_images = 5
+
+train_labels = f"{parent}/Datasets/{folder}/labels/train"
+train_images = f"{parent}/Datasets/{folder}/images/train"
+test_labels = f"{parent}/Datasets/{folder}/labels/test"
+test_images = f"{parent}/Datasets/{folder}/images/test"
+path_fonts = f"{parent}/generate_images/fonts/"
 
 # YOLO
 data_yaml = "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05/Detection/YOLO/data.yaml"

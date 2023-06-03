@@ -1,11 +1,9 @@
 from PIL import Image, ImageDraw, ImageFont
 import random
-import numpy as np
-import sys
 import string
-import os
-from random_word import RandomWords
-sys.path.insert(0, 'C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/28_05')
+import os 
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import convert_bbox_to_yolo
 from params import *
 
@@ -16,11 +14,11 @@ background_colors = [ "#F8F8F8", "#E5E5E5", "#D2D2D2", "#FFFFFF", "#F0F0F0", "#F
 
 dict_char = {k:i for i,k in enumerate(string.ascii_lowercase + string.digits)}
 
-with open("C:/Users/adars/github-classroom/DCC-UAB/xnap-project-ed_group_01/Datasets/lexicon.txt", 'r') as file:
+with open("Datasets/lexicon.txt", 'r') as file:
     words = file.readlines()
     words = [w[:-1] for w in words]
 
-def generate_images(n, label_dir, images_dir, xy = (0,0)):
+def generate_images(n, label_dir, images_dir, multiclass, xy = (0,0)):
     for i in range(n):
         new_str = words[random.randint(0, len(words)-1)]
         
@@ -52,14 +50,16 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
                 #draw.rectangle((left, top, right, bottom), None, "#f00")
 
                 bbox_yolo = convert_bbox_to_yolo((left, top, width, height), size[0], size[1])
+                if multiclass:
+                    char_index = dict_char[char]
+                else:
+                    char_index = 0 
 
-                #char_index = 0 #comment for multiclass
-                char_index = dict_char[char]
                 file.write(f"{char_index} {bbox_yolo[0]} {bbox_yolo[1]} {bbox_yolo[2]} {bbox_yolo[3]}\n")
             
             file.close()
             img.save(os.path.join(images_dir, f"{new_str}.jpg"))
 
 
-generate_images(5, train_labels, train_images)
-#generate_images(5000, test_labels, test_images)
+generate_images(n_train_images, train_labels, train_images, multiclass)
+generate_images(n_test_images, test_labels, test_images, multiclass)

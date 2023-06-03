@@ -2,20 +2,19 @@ from PIL import Image, ImageDraw, ImageFont
 import random
 import string
 import os 
-
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import convert_bbox_to_yolo
-from ..params import *
+from params import *
 
-
-
-fonts = ["ARIAL.TTF", "CALIBRI.TTF", "COMIC.TTF", "CORBEL.TTF", "SEGOEPR.TTF", "BERNHC.TTF", "COLONNA.TTF", "FRSCRIPT.TTF", "HARLOWSI.TTF", "INKFREE.TTF", "ITCBLKAD.TTF", "JOKERMAN.TTF", "MTCORSVA.TTF", "VINERITC.TTF"]
+fonts = os.listdir(path_fonts)
 text_colors = ["#000000", "#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF"]
 background_colors = [ "#F8F8F8", "#E5E5E5", "#D2D2D2", "#FFFFFF", "#F0F0F0", "#FAFAFA", "#EFEFEF", "#F5F5F5"]
 
 dict_char = {k:i for i,k in enumerate(string.ascii_lowercase + string.digits)}
 
 
-def generate_images(n, label_dir, images_dir, xy = (0,0)):
+def generate_images(n, label_dir, images_dir, multiclass, xy = (0,0)):
     for i in range(n):
         n = random.randint(3, 10)
         new_str = ''.join(random.choices(string.ascii_lowercase + string.digits, k=n))
@@ -48,14 +47,16 @@ def generate_images(n, label_dir, images_dir, xy = (0,0)):
                 #draw.rectangle((left, top, right, bottom), None, "#f00")
 
                 bbox_yolo = convert_bbox_to_yolo((left, top, width, height), size[0], size[1])
+                if multiclass:
+                    char_index = dict_char[char]
+                else:
+                    char_index = 0 
 
-                char_index = 0 #comment for multiclass
-                #char_index = dict_char[char]
                 file.write(f"{char_index} {bbox_yolo[0]} {bbox_yolo[1]} {bbox_yolo[2]} {bbox_yolo[3]}\n")
             
             file.close()
             img.save(os.path.join(images_dir, f"{new_str}.jpg"))
 
 
-#generate_images(50000, train_labels, train_images)
-generate_images(5000, test_labels, test_images)
+generate_images(n_train_images, train_labels, train_images, multiclass)
+generate_images(n_test_images, test_labels, test_images, multiclass)
