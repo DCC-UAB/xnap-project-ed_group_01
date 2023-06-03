@@ -16,3 +16,4 @@ dependencies:
   - wandb
   - onnxruntime
   - ipykernel
+  - ultralytics

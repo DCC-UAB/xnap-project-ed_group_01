@@ -1,7 +1,0 @@
-path: /home/alumne/data
-train: images/train
-val: images/test
-
-# Classes
-nc: 1
-names: ['character']
