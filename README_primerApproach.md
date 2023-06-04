@@ -76,7 +76,7 @@ Per poder dur a terme aquest entrenament, un altre cop farem ús dels dos datase
 
 #### Arquitectures utilitzades
 
-En aquesta secció parlarem de les tres arquitectures de xarxes neuronals convolucionals (CNNs) amb què hem experimentat per al reconeixement de caràcters: ResNet18, VGG11 i Inception_v3. A continuació aprofundirem una mica més sobre cada arquitectura i seguidament explicarem l'entrenament i el *hyperparameter tuning* de cadascuna.
+En aquesta secció parlarem de les tres arquitectures de xarxes neuronals convolucionals (CNNs) amb què hem experimentat per al reconeixement de caràcters: ResNet18, VGG11 i GoogleNet (Inception_v3). A continuació aprofundirem una mica més sobre cada arquitectura i seguidament explicarem l'entrenament i el *hyperparameter tuning* de cadascuna.
 
 ##### 1. Resnet18
 
@@ -90,15 +90,15 @@ La Resnet18 es tracta d'una arquitectura de xarxa convolucional amb 18 capes de 
 
 La VGG11 és una xarxa CNN composta per capes convolucionals seguides de capes de pooling, seguides finalment d'un conjunt de *fully connected layers*. Utilitza filtres de mida petita (3x3) en totes les capes convolucionals, mitjançant els quals captura característiques visuals a les imatges. 
 
-##### 3. GoggleNet (Inception_v3)
+##### 3. GoggleNet
 
 ![Arquitectura Inception_v3](https://i.imgur.com/zChawpt.png)
 
-La GoogleNet (??? és lo mateix que Inception_v3???) és una arquitectura CNN que es basa en la idea dels moduls d'Inception, que fan ús de filtres de diferents mides (1x1, 3x3, 5x5) en paral·lel per poder capturar característiques visuals a diferents escales a partir de les imatges. Aquests mòduls s'ajunten en profunditat per permetre l'extracció de característiques tant locals com globals de les imatges. Inception_V3 també fa ús de tècniques de regularització i factorització de les capes de convolucions per així millorar el rendiment i reduir el nombre de paràmetres.
+La GoogleNet és una arquitectura CNN que es basa en la idea dels moduls d'Inception, que fan ús de filtres de diferents mides (1x1, 3x3, 5x5) en paral·lel per poder capturar característiques visuals a diferents escales a partir de les imatges. Aquests mòduls s'ajunten en profunditat per permetre l'extracció de característiques tant locals com globals de les imatges. GoogleNet també fa ús de tècniques de regularització i factorització de les capes de convolucions per així millorar el rendiment i reduir el nombre de paràmetres.
 
 #### Hyperparameter tuning
 
-Aquesta secció estarà dedicada a la cerca i ajust de hiperparàmetres per les diferents arquitectures CNN que hem utilitzat, ResNet18, VGG11 e Inception V3. L'objectiu és intentar trobar la combinació òptima d'hiperparàmetres que maximitzi el rendiment de les nostres xarxes. Començarem entrenant les xarxes amb els seus paràmetres *default* i en funció de les nostres necessitats experimentarem amb el learning rate, els diferents schedulers, weight decay, etc.
+Aquesta secció estarà dedicada a la cerca i ajust de hiperparàmetres per les diferents arquitectures CNN que hem utilitzat, ResNet18, VGG11 i GoogleNet. L'objectiu és intentar trobar la combinació òptima d'hiperparàmetres que maximitzi el rendiment de les nostres xarxes. Començarem entrenant les xarxes amb els seus paràmetres *default* i en funció de les nostres necessitats experimentarem amb el learning rate, els diferents schedulers, weight decay, etc.
 
 ##### 1. Resnet18
 
@@ -124,7 +124,7 @@ Per la xarxa de ResNet18 l'hiperparàmetre principal amb el qual vam exprimentar
 
 Per la xarxa de VGG11 hem experimentat amb diferents schedulers i el weight decay, especialment pel dataset d'IIT on hem vist que era amb el què el model tenia més dificultats per convergir, doncs sovint es quedava estancat i la loss no acavaba de baixa del tot. Per aquesta mateixa raó vam iniciar afegit weight decay, el qual tot i que ens va mostrar certa millora no era la desitjada. Seguidament vam provar amb dos diferents schedulers els quals també van ajudar a millorar els resultats, sent el StepLR el qual millors mèetriques ens va donar. Respecte el nostre dataset desde un principi amb el paràmetres per *dafault* ja veiem bons resultats, el qual hem acabat de millorar al afegir-ho weight decay durant l'entrenament.
 
-##### 3. GoogleNet (Inception_v3)
+##### 3. GoogleNet
 
 | Dataset        | Learning Rate | Train Loss | Train Accuracy | Test Loss | Test Accuracy |
 | -------------- | ------------- | ----------------- | --------------------- | ---------------- | -------------------- |
@@ -145,7 +145,7 @@ Vista la cerca d'hiperparàmetre per cada una de les diferents arquitectures amb
 |-----------|-----------|-----------|
 | ResNet18    |   **0.9961**   |   **0.9977**   |
 | VGG11       |   0.9836   |   0.9789   |
-| Inception V3 |   0.9717   |   0.9742   |
+| GoogleNet |   0.9717   |   0.9742   |
 
 ##### Pel dataset d'IIIT:
 
@@ -153,7 +153,7 @@ Vista la cerca d'hiperparàmetre per cada una de les diferents arquitectures amb
 |-----------|-----------|-----------|
 | ResNet18    |   **0.9984**   |   **0.8781**   |
 | VGG11       |   0.9227   |   0.8461   |
-| Inception V3 |   0.9900   |   0.8689   |
+| GoogleNet |   0.9900   |   0.8689   |
 
 Tant pel nostre dataset propi com pel d'IIIT el model basat en RenNet18 mostre un rendiment superior en termes d'accuracy tant pel *train set* com pel *test set*. Això ens indica que la ResNet18 és capaç d'aprendre i generalitzar millor les característiques dels caràcters presents als diferents datasets, resultant en una millor accuracy. Aquests resultats donen suport a la nostra elecció d'utilitzar la ResNet18 com el model per la tasca de reconeixement dels caràcters pels dos datasets.
 
