@@ -157,6 +157,16 @@ Es crea l’objecte knn de sklearn per tal de poder predir les paraules a partir
 
 En aquest fitxer es poden especificar els hiperparàmetres. Està programat perquè les imatges d’entrada tinguin un canal.
 
+#### CRNN
+Per tal d'entrenar i validar alhora la CRNN primer has de modificar el **params.py**:
+- type_crnn_dataset: nom del dataset
+- mat_data_train_file: fitxer .mat de train per quan s'estigui fent servir el dataset iiit
+- mat_data_test_file: fitxer .mat de test per quan s'estigui fent servir el dataset iiit
+- mat_data_img_dir: carpeta on hi haurà les imatges en format .mat
+
+Llavors ja pots executar:
+``` python PIPELINE\RCNN\main.py```
+
 ## Baseline
 Aquest projecte parteix d'una baseline com a punt de partida per al desenvolupament de la tasca. Aquesta es basa en una arquitectura anomenada PHOCNet (Pyramidal Histogram Of Characters Network), un model de xarxa neuronal dissenyat específicament per tasques de reconeixement de paraules.
 

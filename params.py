@@ -45,3 +45,11 @@ saved_model_phocnet = f"{parent}/PIPELINE/PHOCNET/models_entrenats/"
 store_knn_classifier = f"{parent}/PIPELINE/PHOCNET/utils/knn_classifier"
 lexicon_file = f"{parent}/Datasets/lexicon.txt"
 bigrams_file = f"{parent}/PIPELINE/PHOCNET/utils/bigrams_new.txt"
+
+# PIPELINE (CRNN)
+type_crnn_dataset = "ours" # Options: ["iiit", "ours"]
+mat_data_train_file = ""
+mat_data_test_file = ""
+mat_data_img_dir = ""
+
+
