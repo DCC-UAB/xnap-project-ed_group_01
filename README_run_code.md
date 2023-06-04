@@ -1,3 +1,34 @@
+# Cropped Word Recognition
+En aquest repositori hi trobareu com fer Cropped Word Recognition amb diferents mètodes:
+- OCR + CNN
+- YOLO + CNN
+- YOLO
+- PHOCNET
+- CRNN
+
+En aquesta seccció s'hi exposarà l'estructura de codi, la generació de datasets i les proves amb els diferents models.
+
+## Estructura
+```
+├───Datasets
+├───Detection
+│   ├───OCR
+│   └───YOLO
+│       └───models_entrenats
+├───generate_images
+│   ├───fonts
+├───PIPELINE
+│   ├───OCR_CNN
+│   ├───PHOCNET
+│   │   ├───models
+│   │   ├───models_entrenats
+│   │   ├───utils
+│   ├───YOLO
+│   │   └───models_entrenats
+│   └───YOLO_CNN
+├───Recognition
+│   ├───saved_model
+```
 
 ## Generació de dataset
 
