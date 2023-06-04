@@ -16,6 +16,6 @@ Actualment, ens trobem en la fase d'entrenament d'aquest model. Estem treballant
 
 ![Canvi d'scheduler IIIT](https://i.imgur.com/aqqbL2i.png)
 
-![Canvi d'scheduler pel nostre dataset](https://i.imgur.com/ybHhWOG.png)
+![Canvi d'scheduler pel nostre dataset](https://i.imgur.com/PcGgton.png)
 
 Hem realitzat diversos intents per abordar aquest problema, com ara ajustar el scheduler (les dos figures anteriors), modificar el learning rate i explorar altres paràmetres relacionats. No obstant això, malgrat aquests canvis, tant la *train loss* com la *test loss* continuen estancant-se, cosa que indica que el model no està aprenent de manera efectiva les característiques i els patrons necessaris per poder reconeixer les paraules.
