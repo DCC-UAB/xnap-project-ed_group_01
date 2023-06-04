@@ -158,3 +158,49 @@ Vista la cerca d'hiperparàmetre per cada una de les diferents arquitectures amb
 Tant pel nostre dataset propi com pel d'IIIT el model basat en RenNet18 mostre un rendiment superior en termes d'accuracy tant pel *train set* com pel *test set*. Això ens indica que la ResNet18 és capaç d'aprendre i generalitzar millor les característiques dels caràcters presents als diferents datasets, resultant en una millor accuracy. Aquests resultats donen suport a la nostra elecció d'utilitzar la ResNet18 com el model per la tasca de reconeixement dels caràcters pels dos datasets.
 
 ### Detection + Recognition
+
+En aquest apartat compararem la combinació dels mètodes de detecció que hem explorat anteriorment amb el millor model de reconeixement (ResNet18) que hem entrenat per cada dataset (el nostre propi i el IIIT). Aquesta combinació resultarà en una pipeline que ens permetrà dur a terme la tasca de *word recognition* que se'ns ha proporcionat. Com ja hem explicat a l'introducció del apartat, la pipeline consistirà d'un mètode de detecció per detectar els caràcters i un model de reconeixement entrenar per reconeixer les lletres detectades.
+
+Per poder fer la comparativa les mètriques que utilitzarem seràn l'edit distance (que ja hem explicat anteriorment, és una manera de calcular la distància d'edició entre paraules de diferet mida, ens permetrà saber quant s'allunya la nostra predicció de la paraula correcta a predir), accuracy (si la praula predita és correcta) i accuracy amb diferents nivells de toleràcia. Respect a això últim, estarem avaluant l'accuracy del sistema tenint en compte que es considera correcta la paraula fins i tot si es produeix un error en una lletra; i també considerarem si s'accepta com a correcte si es produeixen fins a dos errors a les lletres. Aquestes mètriques ens permetran tenir una visió més completa del rendiment i la capacitat del sistema per dur a terme la tasca de *word recognition* amb els diferents datasets.
+
+Pel dataset nostre obtenim els següents resultats:
+
+| Mètode           | Edit Distance | Accuracy | Accuracy (fallant 1) | Accuracy (fallant 2) |
+|------------------|---------------|----------|-----------------------|-----------------------|
+| OCR+CNN          | 4.861             | 0.072        | 0.075                     | 0.145                     |
+| YOLO+CNN         | **2.211**             | **0.524**        | **0.569**                     | **0.673**                     |
+
+Pel dataset d'IIIT obtenim els següents resultats:
+
+| Mètode           | Edit Distance | Accuracy | Accuracy (fallant 1) | Accuracy (fallant 2) |
+|------------------|---------------|----------|-----------------------|-----------------------|
+| OCR+CNN          | 4.041             | 0.231        | 0.241                     | 0.415                     |
+| YOLO+CNN         | **0.467**             | **0.689**        | **0.702**                     | **0.894**                     |
+
+La combinació de YOLO+CNN mostra un millor rendiment i millors resultats en general tant en termes d'edit distance com per les diferents mètriques d'accuracy (la normal i les que tenen en compte diferents nivell de toleràcia) en comparació amb OCR+CNN. Això es deu principalment al fet que YOLO realitza deteccions més precises i evita la sobre-detecció. D'altra banda, l'OCR tradicional tendeix a segmentar incorrectament i, en molts casos, sobredetecta (com ja hem discutit en apartats anteriors), cosa que afecta negativament la predicció de paraules. Això pot portar a la predicció incorrecta de més lletres de les que hi ha o directament a la predicció incorrecta de lletres degut a una mala detecció inicial (veure confusion matrix següent).
+
+![Confusion matrix per les dos metodologies/pipelines](https://i.imgur.com/G4fPmHO.png)
+
+A més, en general podem observar que s'obtenen millors resultats pel dataset de IIIT en comparació amb el nostre propi dataset. Això és principalment perquè el nostre dataset (a més de ser considerablement més gran) conté una gran varietat de fonts, algunes de les quals poden ser ambigües i difícils d'interpretar, a més de què també presenta paraules més complexes. D'altra banda, el dataset d'IIIT consisteix principalment en fonts estàndards, cosa que en facilita el processament i l'obtenció de resultats més precisos.
+
+Apart de les dues metodologies OCR+CNN i YOLO+CNN ja exporadem, també vam decidir dur a terme experiments utilitzant només YOLO per avaluar el seu rendiment en tasques de *multiclass detection*. El nostre objectiu era fer ús dels mateixos datasets, però en lloc de utilitzar YOLO per detectar els diferents caràcters de forma individual, fem ús del YOLO per detectar el caràcter complet segons la seva classe, cosa que ens va permetre fer el reconeixement de paraules. Aquesta exploració addicional ens va permetre avaluar la *performance* de YOLO per una tasca de detecció multiclasse i comparar-ho amb els resultats obtinguts mitjançant les altres metodologies.
+
+
+Pel dataset nostre obtenim els següents resultats:
+
+| Mètode           | Edit Distance | Accuracy | Accuracy (fallant 1) | Accuracy (fallant 2) |
+|------------------|---------------|----------|-----------------------|-----------------------|
+| OCR+CNN          | 4.861             | 0.072        | 0.075                     | 0.145                     |
+| YOLO+CNN         | **2.211**             | **0.524**        | **0.569**                     | **0.673**                     |
+| YOLO             | 2.872             | 0.435        | 0.561                     | 0.568                     |
+
+Pel dataset d'IIIT obtenim els següents resultats:
+
+| Mètode           | Edit Distance | Accuracy | Accuracy (fallant 1) | Accuracy (fallant 2) |
+|------------------|---------------|----------|-----------------------|-----------------------|
+| OCR+CNN          | 4.041             | 0.231        | 0.241                     | 0.415                     |
+| YOLO+CNN         | **0.467**             | **0.689**        | **0.702**                     | **0.894**                     |
+| YOLO             | 0.895             | 0.567        | 0.628                     | 0.774                     |
+
+En els resultats anteriors podem veure com fer ús només del YOLO per a la detecció multiclasse pels diferents datasets obtenim uns resultats superiors en comparació amb la metodologia OCR+CNN, però no aconseguim el rendiment obtingut amb YOLO+CNN.
+La raó principal darrere d'aquests resultats creiem que recau en les propies capacitats intrínseques de cada enfoc. Per començar tenim el model de YOLO, que està dissenyat específicament per a la detecció d'objectes en imatges, cosa que li permet dur a terme una bona detecció, tot i que la part de classificació pot no arribar a ser tan òptima. D'altra banda, tenim la metodologia OCR+CNN, que encara que pot segmentar i reconèixer caràcters individuals amb certa precisió, es pot veure limitada per la seva capacitat de detecció, ja que com hem comentat anteriorment l'OCR no és capaç de dur a terme una detecció amb alta exactitud. Finalment tenim YOLO+CNN quecombina el YOLO amb una CNN. D'aquesta forma aprofitem les fortaleses dels dos mons, per un costat tenim el YOLO que s'encarrega de dur a terma una detecció precisa de les lletres de les paraules; i per l'altre costat la CNN, que s'enfoca en el reconeixement i la classificació dels caràcters continguts en aquestes paraules. Aquesta combinació dona lloca a una millor *performance* en comparació amb l'ús exclusiu de YOLO o la metodologia OCR+CNN.
