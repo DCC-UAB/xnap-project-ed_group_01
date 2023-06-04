@@ -4,8 +4,8 @@
 Per generar un dataset primer s’ha de modificar el **params.py**:
 
 - type_generate: pots indicar si el nou dataset ha de contenir paraules random (random_words) o paraules creades a partir de lletres random (random_chars). 
-- multiclass: pots indicar si vols que els labels siguin multiclasse (True) o d’una única classe (False). Els labels multiclasse són útils per treballar amb un YOLO que detecti caràcters i els labels d’una sola classe són útils per treballar amb un YOLO que detecti i predeixi caràcters alhora.
-- folder: carpeta on guardar les imatges.  Per defecte l’has de tenir creada amb el següent format, tot i que al mateix params.py pots canviar l’estructura:
+- multiclass: pots indicar si vols que els labels siguin multiclasse (True) o d’una única classe (False). Els labels s'una sola classe són útils per treballar amb un YOLO que detecti caràcters i els labels de multiclasse són útils per treballar amb un YOLO que detecti i predeixi caràcters alhora.
+- folder: carpeta on guardar les imatges. Per defecte l’has de tenir creada amb el següent format, tot i que al mateix params.py pots canviar l’estructura:
  
   - folder_name
     - labels
@@ -28,6 +28,7 @@ A continuació ja pots executar:
 #### OCR
 Per fer predicció dels bounding boxes dels caràcters amb OCR primer s’ha de modificar el **params.py**:
 -	ocr_predictions: carpeta on guardar els fitxers .txt de cada imatges amb els seus bboxes.
+
 Ara ja es pot executar l’arxiu Detection/OCR/ocr.py.
 Per avaluar aquestes prediccions, executar:
 
@@ -37,6 +38,7 @@ Per avaluar aquestes prediccions, executar:
 Per entrenar el YOLO per fer només detecció de caràcters primer s’ha de canviar el **params.py**.
 -	data_yaml_detection: carpeta pròpia on s’executa el fitxer i es guardarà el yaml amb les dades d’entrenament
 -	path_yolo_detection: carpeta d’on yolo agafa les imatges i labels. El format requerit és el mateix que especifiquem a l’hora de generar el dataset
+
 Després s’ha d’executar:
 
 ``` python Detection/YOLO/yolo8.py```
@@ -62,6 +64,7 @@ Per fer la validació de la pipeline de OCR + CNN amb el CNN ja entrenat  primer
 -	cnn_model: nom del model CNN guardat
 -	model_cnn_entrenat: carpeta on es guarden els models CNN entrenats
 -	ocr_cnn_store_files: carpeta on es guarden les prediccions
+
 Després s’ha d’executar el fitxer 
 
 ``` python PIPELINE/OCR_CNN/pipeline.py ```
@@ -76,9 +79,10 @@ Per fer la validació de la pipeline de YOLO + CNN amb el YOLO i CNN ja entrenat
 -	yolo_model: nom del model YOLO guardat
 -	model_yolo_entrenat:  carpeta on es guarda el model YOLO entrenat
 -	yolo_cnn_store_files: carpeta on es guarden les prediccions
+
 Després s’ha d’executar: 
 
-``` python PIPELINE/**YOLO_CNN/pipeline.py```
+``` python PIPELINE/YOLO_CNN/pipeline.py```
 
 Genera les matrius de confusió pertinents i printeja l’accuracy i l’edit distancce. 
 
@@ -86,6 +90,7 @@ Genera les matrius de confusió pertinents i printeja l’accuracy i l’edit di
 Per entrenar el YOLO per fer detecció i reconeixement de caràcters primer s’ha de modificar el **params.py**:
 -	data_yaml_detection: carpeta pròpia on s’executa el fitxer i es guardarà el yaml amb les dades d’entrenament
 -	path_yolo_detection: carpeta d’on yolo agafa les imatges i labels. El format requerit és el mateix que especifiquem a l’hora de generar el dataset
+
 Després s’ha d’executar:
 
 ``` python PIPELINE/YOLO/yolo8.py ``` 
@@ -95,6 +100,7 @@ Per avaluar aquest YOLO, s’ha de modificar el fitxer **params.py**:
 -	yolo_pipeline_model: nom del model YOLO guardat
 -	yolo_entrenat_recog_detect fitxer: carpeta on es guarda el model YOLO entrenat
 -	yolo_pipeline_store_files: carpeta on es guarden les prediccions
+
 Després s’ha d’executar: 
 
 ``` python PIPELINE/YOLO/pipeline.py```
@@ -105,12 +111,12 @@ Per tal d’entrenar i validar alhora la PHOCNET primer has de modificar el fitx
 -	store_knn_classifier: fitxer que conté un pickle del knn classifier
 -	lexicon_file = fitxer que guarda les 88000 paraules en anglès
 -	bigrams_file: fitxer que guarda els bigrams i trigrams més utilitzats en anglès
+
 Primer has d’executar:
 
 ``` python PIPELINE\PHOCNET\utils\knn_classifierpy``` 
 
-Es crea l’objecte knn de sklearn per tal de poder predir les paraules a partir d’una representació PHOC.
-A continuació ja es pot executar:
+Es crea l’objecte knn de sklearn per tal de poder predir les paraules a partir d’una representació PHOC. A continuació ja es pot executar:
 
 ``` python PIPELINE\PHOCNET\main.py``` 
 
