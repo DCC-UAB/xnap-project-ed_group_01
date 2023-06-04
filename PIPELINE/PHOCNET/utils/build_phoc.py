@@ -1,4 +1,8 @@
 import numpy as np
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+from params import *
 
 def build_phoc(words, phoc_unigrams, unigram_levels,
                bigram_levels=None, phoc_bigrams=None,
@@ -91,7 +95,7 @@ def phoc(raw_word):
     
     phoc_bigrams = []
     i = 0
-    with open('/home/alumne/xnap-project-ed_group_01/PHOC_UNET/utils/bigrams_new.txt','r') as f:
+    with open(bigrams_file,'r') as f:
         for line in f:
             a = line.split()
             phoc_bigrams.append(a[0].lower())

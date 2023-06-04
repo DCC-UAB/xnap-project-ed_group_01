@@ -10,11 +10,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import editdistance
 import glob
-sys.path.insert(0, "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05/Recognition")
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))+'\\Recognition')
 from model import CharacterClassifier
 from torchvision.transforms import ToTensor, Normalize, Resize, Compose
-from torchvision import transforms
-sys.path.insert(0, "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05")
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from params import *
 
 # Load the trained CNN model
@@ -30,11 +29,11 @@ def recognize_text(image_path, yolo_model_path):
 
     predictions = results[0].boxes.xyxy.cpu().data.numpy()
     sorted_indices = np.argsort(predictions[:, 0])
-    sorted_predictions = predictions[sorted_indices]
+    list_bbox = predictions[sorted_indices]
 
     recognized_text = []
 
-    for bbox in sorted_predictions:
+    for bbox in list_bbox:
         x1, y1, x2, y2 = bbox
 
         image = Image.open(image_path)
@@ -73,37 +72,36 @@ text_labels = []
 images_paths = []
 file_list = glob.glob(test_images + '/*')
 file_count = len(file_list)
-### AMB EL NOSTRE DATASET
-"""
-for i,img_file in enumerate(os.listdir(test_images)):
-    predicted_word = recognize_text(os.path.join(test_images, img_file), model_yolo_entrenat)
-    predicted_labels.append(predicted_word)
-    text_labels.append(img_file.split(".")[0])
-    #text_labels.append(img_file.split("_")[1])
-    images_paths.append(os.path.join(test_images, img_file))
-    print(f"{i}/{file_count}")
-"""
-### AMB EL IIT
 
-mapping = {str(i): char for i, char in enumerate(string.ascii_lowercase+string.digits)}
-for i,img_file in enumerate(os.listdir(test_images)):
-    predicted_word = recognize_text(os.path.join(test_images, img_file), model_yolo_entrenat)
-    if predicted_word == None:
-        continue
-    predicted_labels.append(predicted_word)
-    txt_path = os.path.join(test_labels, img_file.split(".")[0]+".txt")
-    word = ""
-    with open(txt_path, 'r') as file:
-        for line in file:
-            index = line.split(" ")[0]
-            word += mapping.get(index)
-    text_labels.append(word)
-    print(f"{i}/{file_count}")
+if dataset == "ours":
+    for i,img_file in enumerate(os.listdir(test_images)):
+        predicted_word = recognize_text(os.path.join(test_images, img_file), model_yolo_entrenat)
+        predicted_labels.append(predicted_word)
+        text_labels.append(img_file.split(".")[0])
+        #text_labels.append(img_file.split("_")[1])
+        images_paths.append(os.path.join(test_images, img_file))
+        #print(f"{i}/{file_count}")
+
+elif dataset == "iiit":
+    mapping = {str(i): char for i, char in enumerate(string.ascii_lowercase+string.digits)}
+    for i,img_file in enumerate(os.listdir(test_images)):
+        predicted_word = recognize_text(os.path.join(test_images, img_file), model_yolo_entrenat)
+        if predicted_word == None:
+            continue
+        predicted_labels.append(predicted_word)
+        txt_path = os.path.join(test_labels, img_file.split(".")[0]+".txt")
+        word = ""
+        with open(txt_path, 'r') as file:
+            for line in file:
+                index = line.split(" ")[0]
+                word += mapping.get(index)
+        text_labels.append(word)
+        #print(f"{i}/{file_count}")
 
 edit_dist, accur, accur2 = metrics(predicted_labels, text_labels)
-print(edit_dist)
-print(accur)
-print(accur2)
+print(f"Edit distance: {edit_dist}")
+print(f"Accuracy: {accur}")
+print(f"Accuracy with edit_dist < 2: {accur2}")
 with open('predicted_labels.txt', 'w') as file:
     # Write each item in the list to a new line in the file
     for item in predicted_labels:
@@ -135,5 +133,5 @@ plt.figure(figsize=(10, 8))
 sns.heatmap(confusion_df, annot=False, fmt='d', cmap='Blues', cbar=False)
 plt.xlabel('Predicted')
 plt.ylabel('Ground Truth')
-plt.title('Confusion Matrix OCR + CNN')
+plt.title('Confusion Matrix YOLO + CNN')
 plt.show()

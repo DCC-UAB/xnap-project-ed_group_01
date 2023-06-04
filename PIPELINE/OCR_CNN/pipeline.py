@@ -1,7 +1,6 @@
 # Posar-hi el codi per fer inferència -> calcular edit distance
 
 import sys
-import cv2
 import torch
 import os
 import numpy as np
@@ -10,15 +9,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import editdistance
 from torchvision.transforms import ToTensor
-sys.path.insert(0, "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05/Recognition")
-from model import CharacterClassifier
-sys.path.insert(0, "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05/Detection/OCR")
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))+'\\Detection\\OCR')
 from ocr import segment_letters
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))+'\\Recognition')
+from model import CharacterClassifier
 from PIL import Image
 import glob
 from torchvision.transforms import ToTensor, Normalize, Resize, Compose
 import string
-sys.path.insert(0, "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05")
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from params import *
 
 # Load the trained CNN model
@@ -72,39 +71,37 @@ def metrics(predicted_labels, text_labels):
 predicted_labels = []
 text_labels = []
 images_paths = []
-#### AMB EL NOSTRE DATASET
+
 file_list = glob.glob(test_images + '/*')
-
 file_count = len(file_list)
-"""
-for i,img_file in enumerate(os.listdir(test_images)):
-    predicted_word = recognize_text(os.path.join(test_images, img_file))
-    predicted_labels.append(predicted_word)
-    text_labels.append(img_file.split(".")[0])
-    images_paths.append(os.path.join(test_images, img_file))
-    print(f"{i}/{file_count}")
-"""
 
-#### AMB EL IIT
+if dataset == "ours":
+    for i,img_file in enumerate(os.listdir(test_images)):
+        predicted_word = recognize_text(os.path.join(test_images, img_file))
+        predicted_labels.append(predicted_word)
+        text_labels.append(img_file.split(".")[0])
+        images_paths.append(os.path.join(test_images, img_file))
+        #print(f"{i}/{file_count}")
 
-mapping = {str(i): char for i, char in enumerate(string.ascii_lowercase+string.digits)}
-for i,img_file in enumerate(os.listdir(test_images)):
-    predicted_word = recognize_text(os.path.join(test_images, img_file))
-    if predicted_word == None:
-        continue
-    predicted_labels.append(predicted_word)
-    txt_path = os.path.join(test_labels, img_file.split(".")[0]+".txt")
-    word = ""
-    with open(txt_path, 'r') as file:
-        for line in file:
-            index = line.split(" ")[0]
-            word += mapping.get(index)
-    text_labels.append(word)
-    print(f"{i}/{file_count}")
+elif dataset == "iiit":
+    mapping = {str(i): char for i, char in enumerate(string.ascii_lowercase+string.digits)}
+    for i,img_file in enumerate(os.listdir(test_images)):
+        predicted_word = recognize_text(os.path.join(test_images, img_file))
+        if predicted_word == None:
+            continue
+        predicted_labels.append(predicted_word)
+        txt_path = os.path.join(test_labels, img_file.split(".")[0]+".txt")
+        word = ""
+        with open(txt_path, 'r') as file:
+            for line in file:
+                index = line.split(" ")[0]
+                word += mapping.get(index)
+        text_labels.append(word)
+        #print(f"{i}/{file_count}")
 
 edit_dist, accur, accur2 = metrics(predicted_labels, text_labels)
-print(edit_dist)
-print(accur)
+print(f"Edit distance: {edit_dist}")
+print(f"Accuracy: {accur}")
 with open('predicted_labels.txt', 'w') as file:
     # Write each item in the list to a new line in the file
     for item in predicted_labels:
@@ -138,6 +135,3 @@ plt.xlabel('Predicted')
 plt.ylabel('Ground Truth')
 plt.title('Confusion Matrix OCR + CNN')
 plt.show()
-
-
-print("uwu")

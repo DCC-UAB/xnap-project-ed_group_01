@@ -1,11 +1,13 @@
 from build_phoc import phoc
 from sklearn.neighbors import KNeighborsClassifier
-
-import pickle
+import sys
 import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+from params import *
+import pickle
 
 
-annotations_file = "/home/alumne/xnap-project-ed_group_01/Datasets/lexicon.txt"
+annotations_file = lexicon_file
 
 with open(annotations_file, "r") as file:
     list_of_words = file.readlines()
@@ -20,7 +22,7 @@ phoc_representations = phoc(list_of_words)
 knn = KNeighborsClassifier(n_neighbors=1)
 knn.fit(phoc_representations, list_of_words)
 
-knnPickle = open('/home/alumne/xnap-project-ed_group_01/28_05/PIPELINE/PHOCNET/utils/knn_classifier', 'wb') 
+knnPickle = open(store_knn_classifier, 'wb') 
 pickle.dump(knn, knnPickle)  
 knnPickle.close()
 

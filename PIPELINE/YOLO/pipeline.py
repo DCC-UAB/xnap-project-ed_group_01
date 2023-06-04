@@ -1,10 +1,10 @@
 from ultralytics import YOLO
-from PIL import Image, ImageDraw
+from PIL import Image
 import sys
 import os
 from ultralytics import YOLO
 import numpy as np
-sys.path.insert(0, "/home/alumne/ProjecteNN/xnap-project-ed_group_01/28_05")
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from params import *
 import editdistance
 import pandas as pd
@@ -13,7 +13,7 @@ import seaborn as sns
 import glob
 import string
 
-def recognize_text(image_path, yolo_model_path, dataset = "normal"):
+def recognize_text(image_path, yolo_model_path, store_files, dataset = "normal"):
     model = YOLO(yolo_model_path)
 
     predicted_labels = []
@@ -69,11 +69,11 @@ def recognize_text(image_path, yolo_model_path, dataset = "normal"):
 
     edit_dist, accur, accur_2 =  metrics(predicted_labels, text_labels)
 
-    with open('predicted_labels_dif.txt', 'w') as file:
+    with open(store_files +'/predicted_labels_dif.txt', 'w') as file:
     # Write each item in the list to a new line in the file
         for item in predicted_labels:
             file.write(item + '\n')
-    with open('images_paths_dif.txt', 'w') as file:
+    with open(store_files+'/images_paths_dif.txt', 'w') as file:
     # Write each item in the list to a new line in the file
         for item in images_paths:
             file.write(item + '\n')
@@ -93,9 +93,9 @@ def metrics(predicted_labels, text_labels):
 #    predicted_labels.append(predicted_word)
 #    text_labels.append(img_file.split(".")[0])
 
-edit_dist, accur, accur2, predicted_labels, text_labels = recognize_text(test_images, yolo_entrenat_recog_detect, "iit")
-print(edit_dist)
-print(accur)
+edit_dist, accur, accur2, predicted_labels, text_labels = recognize_text(test_images, yolo_entrenat_recog_detect, yolo_pipeline_store_files, "iit")
+print(f"Edit distance: {edit_dist}")
+print(f"Accuracy: {accur}")
 
 # Get all unique letters from both ground truth and predicted words
 letters = list(set(''.join(text_labels + predicted_labels)))
@@ -119,5 +119,5 @@ plt.figure(figsize=(10, 8))
 sns.heatmap(confusion_df, annot=False, fmt='d', cmap='Blues', cbar=False)
 plt.xlabel('Predicted')
 plt.ylabel('Ground Truth')
-plt.title('Confusion Matrix OCR + CNN')
+plt.title('Confusion Matrix YOLO')
 plt.show()

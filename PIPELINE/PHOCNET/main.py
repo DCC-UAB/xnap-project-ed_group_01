@@ -1,14 +1,10 @@
-import random
 import wandb
-import yaml
-
-import numpy as np
 import torch
-
 from train import train
-
 from utils.utils import *
-from tqdm.auto import tqdm
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from params import *
 
 # Device configuration
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -23,18 +19,15 @@ def model_pipeline(cfg:dict) -> None:
 
         return model
 
-with open('/home/alumne/xnap-project-ed_group_01/28_05/PIPELINE/PHOCNET/params.yml', 'r') as file:
-    configuration = yaml.safe_load(file)
-
 if __name__ == "__main__":
     wandb.login()
 
     config = dict(
-        train_dir=configuration["train_dir"],
-        test_dir=configuration["test_dir"],
+        train_dir=train_images+"/",
+        test_dir=test_images+"/",
         epochs=8,
         batch_size= 8,
         learning_rate=0.01,
-        save_model = configuration["save_model"])
+        save_model = saved_model_phocnet+"/")
     model = model_pipeline(config)      
     

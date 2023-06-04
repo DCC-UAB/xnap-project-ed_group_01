@@ -1,4 +1,7 @@
 import torch
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils.wandb_logs import *
 from utils.predict_with_PHOC import predict_with_PHOC
 

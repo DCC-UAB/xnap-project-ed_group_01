@@ -7,8 +7,8 @@ import yaml
 
 info = {
     "path": path_yolo_detection,
-    "train": train_images_yolo_detection,
-    "val": test_images_yolo_detection,
+    "train": train_images,
+    "val": test_images,
     "nc": 1,
     "names": ['character']
 }

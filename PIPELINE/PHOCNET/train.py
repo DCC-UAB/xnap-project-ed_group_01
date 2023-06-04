@@ -1,6 +1,9 @@
 from tqdm.auto import tqdm
 import wandb
 from test import test
+"""import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))"""
 from utils.wandb_logs import *
 from utils.predict_with_PHOC import load_model
 import torch
