@@ -176,13 +176,12 @@ Aquest projecte parteix d'una baseline com a punt de partida per al desenvolupam
   Conté un total de 5000 imatges en color.
 ![alt text](https://imgur.com/go4bJYv.png) 
     
-* **VGG** 
+* **VGG**   
   Aquest segon dataset, a diferència de l'anterior, està generat de manera sintètica i no té color. Està format per diferents fonts i consta de 9 milions d'imatges que contenen 90.000 paraules en anglès.
 ![alt text](https://imgur.com/A7jEd6s.png) 
 
-* **Dataset senzill propi** 
+* **Dataset senzill propi**   
   Per últim, s'ha creat un nou dataset per dur a terme diferents proves. Aquest és també sense color, fons blanc i lletra en negre, amb fonts bàsiques, llegibles i amb la possibilitat de generar tantes imatges com es desitgi, amb un màxim al voltant dels 90000 que és el nombre de paraules diferents al diccionari que es fa servir.
-  
 ![alt text](https://imgur.com/1dlWdGa.png) 
 
 ### PHOC
