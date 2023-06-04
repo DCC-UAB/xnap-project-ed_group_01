@@ -182,6 +182,7 @@ Aquest projecte parteix d'una baseline com a punt de partida per al desenvolupam
 
 * **Dataset senzill propi** 
   Per últim, s'ha creat un nou dataset per dur a terme diferents proves. Aquest és també sense color, fons blanc i lletra en negre, amb fonts bàsiques, llegibles i amb la possibilitat de generar tantes imatges com es desitgi, amb un màxim al voltant dels 90000 que és el nombre de paraules diferents al diccionari que es fa servir.
+  
 ![alt text](https://imgur.com/1dlWdGa.png) 
 
 ### PHOC
