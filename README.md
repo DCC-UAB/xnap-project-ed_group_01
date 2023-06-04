@@ -459,11 +459,11 @@ En aquest informe hem mostrat com funciona el codi i els resultats de la feina f
   - https://github.com/ssudholt/phocnet
 
 ## Autors
-Adarsh Tiwari
-Xavier Querol
-Abril Piñol
+  Adarsh Tiwari -
+  Xavier Querol -
+  Abril Piñol
 
-Xarxes Neuronals i Aprenentatge Profund
 
+Xarxes Neuronals i Aprenentatge Profund  -  
 Grau d'Enginyeria de Dades, 
 UAB, 2023
